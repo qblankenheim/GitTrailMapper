@@ -1,1 +1,14 @@
 /* Empty. Add your own CSS if you like */
+
+.background{
+    background: rgb(156,296,93); /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(rgb(156,296,93), rgb(50,125,50)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgb(156,296,93), rgb(50,125,50)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgb(156,296,93), rgb(50,125,50)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgb(156,296,93), rgb(50,125,50)); /* Standard syntax */
+}
+
+img#HomeHiker{
+	height:50%;
+	text-align: center;
+}
