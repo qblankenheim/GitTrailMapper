@@ -39,6 +39,15 @@ var module = angular.module('starter', ['ionic'])
       }
     }
   })
+  .state('tabs.community',{
+    url:"/community",
+    views:{
+      'community':{
+        templateUrl:"templates/community.html",
+        controller: 'communityCtrl'
+      }
+    }
+  })
   $urlRouterProvider.otherwise("/tabs/home");
   $ionicConfigProvider.tabs.position('bottom');
 })
