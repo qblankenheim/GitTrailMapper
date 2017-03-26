@@ -1,6 +1,8 @@
-var module = angular.module('starter', ['ionic'])
+//var db = null;
 
-.run(function($ionicPlatform) {
+var module = angular.module('starter', ['ionic','ngCordova'])
+
+.run(function($ionicPlatform,$cordovaSQLite) {
   $ionicPlatform.ready(function() {
     if(window.cordova && window.cordova.plugins.Keyboard) {
 
@@ -10,6 +12,8 @@ var module = angular.module('starter', ['ionic'])
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
+    var db = $cordovaSQLite.openDB({ name: "my.db" });
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS trails (id integer primary key, trailName text)");
   })
 })
 

@@ -5,9 +5,10 @@ module
 })
 
 .controller('commCtrl', function($scope, $ionicLoading) {
+  $scope.trails
 })
 
-.controller('mapsCtrl', function($scope, $state) {
+.controller('mapsCtrl', function($scope, $state, $cordovaSQLite) {
 
   var options = {timeout: 10000, enableHighAccuracy: true};
   var latLng = new google.maps.LatLng(43.071278, -89.406797);
@@ -42,6 +43,13 @@ module
         map: $scope.map,
         animation: google.maps.Animation.DROP,
         position: event.latLng
+      });
+      console.log(db+" a");
+      var query = "INSERT INTO trails (trailName) VALUES (?)";
+      $cordovaSQLite.execute(db, query, [event.latLng]).then(function(res) {
+        console.log("INSERT ID -> " + res.insertId);
+      }, function (err) {
+        console.error(err);
       });
     });
   });
