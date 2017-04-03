@@ -4,7 +4,22 @@ module
 .controller('homeCtrl', function($scope, $ionicLoading) {
 })
 
-.controller('commCtrl', function($scope, $ionicLoading) {
+.controller('commCtrl', function($scope, $ionicLoading, $window) {
+
+
+  var options = {timeout: 10000, enableHighAccuracy: true};
+  var latLng = new google.maps.LatLng(43.071278, -89.406797);
+
+
+  var mapOptions = {
+    center: latLng,
+    zoom:30 ,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+
+  $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+
 })
 
 .controller('mapsCtrl', function($scope, $state) {
@@ -15,11 +30,14 @@ module
 
   var mapOptions = {
     center: latLng,
-    zoom: 15,
+    zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
-  $scope.map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  $scope.map = new google.maps.Map(document.getElementById("map1"), mapOptions);
+
+
+
 
 
   google.maps.event.addListenerOnce($scope.map, 'idle', function () {
