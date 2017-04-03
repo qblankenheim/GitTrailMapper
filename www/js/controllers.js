@@ -4,21 +4,68 @@ module
 .controller('homeCtrl', function($scope, $ionicLoading) {
 })
 
-.controller('commCtrl', function($scope, $ionicLoading, $window) {
+.controller('commCtrl', function($scope,$cordovaGeolocation) {
 
+console.log(9);
+  // var options = {timeout: 10000, enableHighAccuracy: true};
+   //var latLng = new google.maps.LatLng(43.071278, -89.406797);
+  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+  var lat;
+  var long;
 
-  var options = {timeout: 10000, enableHighAccuracy: true};
-  var latLng = new google.maps.LatLng(43.071278, -89.406797);
+  $cordovaGeolocation
+    .getCurrentPosition(posOptions)
 
+    .then(function (position) {
+       lat  = position.coords.latitude,
+      long = position.coords.longitude,
+      console.log(lat + '   ' + long)
+      console.log(45);
+      var latLng = new google.maps.LatLng(lat,long);
+      console.log(47);
+      // var latLng = $cordovaGeoLocation.getCurrentPosition();
+      var mapOptions = {
+        center: latLng,
+        zoom: 30,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      console.log(54);
+      $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+      console.log(56);
+    }, function(err) {
+      console.log(err)
+    });
 
-  var mapOptions = {
-    center: latLng,
-    zoom:30 ,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
+  var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+  var watch = $cordovaGeolocation.watchPosition(watchOptions);
 
-  $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+  watch.then(
+    null,
 
+    function(err) {
+      console.log(err)
+    },
+
+    function(position) {
+      lat  = position.coords.latitude,
+      long = position.coords.longitude,
+      console.log(lat + '' + long)
+      console.log(45);
+      var latLng = new google.maps.LatLng(lat,long);
+      console.log(47);
+      // var latLng = $cordovaGeoLocation.getCurrentPosition();
+      var mapOptions = {
+        center: latLng,
+        zoom: 15,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      console.log(54);
+      $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+      console.log(56);
+    }
+  );
+
+  watch.clearWatch();
 
 })
 
@@ -30,15 +77,11 @@ module
 
   var mapOptions = {
     center: latLng,
-    zoom: 10,
+    zoom: 21,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
   $scope.map = new google.maps.Map(document.getElementById("map1"), mapOptions);
-
-
-
-
 
   google.maps.event.addListenerOnce($scope.map, 'idle', function () {
     var marker = new google.maps.Marker({
