@@ -1,3 +1,5 @@
+var database = firebase.database();
+
 var module = angular.module('starter', ['ionic', 'ngCordova'])
 
 .run(function($ionicPlatform) {

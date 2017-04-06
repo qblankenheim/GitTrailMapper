@@ -6,6 +6,14 @@ module
 
 .controller('commCtrl', function($scope,$cordovaGeolocation) {
 
+  function getTrail(trailID) {
+    return firebase.database().ref('/trails/' + trailID).once('value').then(function(snapshot) {
+      var trailName = snapshot.val().trailName;
+      var trailLength = snapshot.val().trailLength;
+      var trailPath = snapshot.val().trailPath;
+      });
+  }
+
 console.log(9);
   // var options = {timeout: 10000, enableHighAccuracy: true};
    //var latLng = new google.maps.LatLng(43.071278, -89.406797);
@@ -70,6 +78,15 @@ console.log(9);
 })
 
 .controller('mapsCtrl', function($scope, $state) {
+
+  function writeTrailData(id,name,length,path) {
+    firebase.database().ref('trails/' +id).set({
+      trailName: name,
+      trailLength: length,
+      trailPath: path
+    });
+  }
+
 
   var options = {timeout: 10000, enableHighAccuracy: true};
   var latLng = new google.maps.LatLng(43.071278, -89.406797);
