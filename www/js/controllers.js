@@ -33,24 +33,7 @@ module
 
   run(wordList);
 
-	// var define = {
-	// 	define = function($in,$define){
-	// 		if($in.length == 0)
-	// 			return;
-	// 		$scope.explore = $in.pop();
-	// 		define($in).then(function(response){
-	// 		     if (timer === null) {
-	// 		         timer = $interval(function(){
-	// 		             $scope.checkNewOrders();
-	// 		         }.bind(this), 1000);
-	// 		     }
-	// 		     define($in);
-	// 		});
-	// 	}
-	// }
-
-
-
+})
 
 
 .controller('commCtrl', function($scope,$cordovaGeolocation) {
