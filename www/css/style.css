@@ -9,8 +9,20 @@
 }
 
 img#HomeHiker{
-	height:50%;
+	display:block;
+	width:50%;
 	text-align: center;
+	padding:15% 0;
+	margin: 0 25%;
+}
+
+#inspire div{
+	font-weight: bold;
+	font-size: 2em;
+	margin:0;
+	float:left;
+	text-align: center;
+	width:100%;
 }
 
 .scroll{
