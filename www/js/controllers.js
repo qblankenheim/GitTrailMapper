@@ -35,7 +35,11 @@ console.log(9);
       var mapOptions = {
         center: latLng,
         zoom: 30,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [{
+              featureType: 'poi',
+              stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+            }
       };
       console.log(54);
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
@@ -65,7 +69,11 @@ console.log(9);
       var mapOptions = {
         center: latLng,
         zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [{
+              featureType: 'poi',
+              stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+            }
       };
       console.log(54);
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
@@ -95,7 +103,11 @@ console.log(9);
   var mapOptions = {
     center: latLng,
     zoom: 21,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    styles: [{
+          featureType: 'poi',
+          stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+        }
   };
 
   $scope.map = new google.maps.Map(document.getElementById("map1"), mapOptions);
