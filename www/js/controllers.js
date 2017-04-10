@@ -39,7 +39,10 @@ console.log(9);
         styles: [{
               featureType: 'poi',
               stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-            }
+            }, {
+                     featureType: 'transit.station',
+                     stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+                   }]
       };
       console.log(54);
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
@@ -73,7 +76,10 @@ console.log(9);
         styles: [{
               featureType: 'poi',
               stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-            }
+            }, {
+                     featureType: 'transit.station',
+                     stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+                   }]
       };
       console.log(54);
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
@@ -107,7 +113,10 @@ console.log(9);
     styles: [{
           featureType: 'poi',
           stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-        }
+        }, {
+               featureType: 'transit.station',
+               stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+             }]
   };
 
   $scope.map = new google.maps.Map(document.getElementById("map1"), mapOptions);
