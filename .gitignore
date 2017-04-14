@@ -6,5 +6,9 @@ platforms/
 plugins/
 android/
 www.zip
+<<<<<<< HEAD
 .idea/
 config.xml
+=======
+resources/
+>>>>>>> master

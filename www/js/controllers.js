@@ -1,8 +1,28 @@
 
 module
+.controller('homeCtrl', function($scope, $ionicLoading, $timeout) {
 
-.controller('homeCtrl', function($scope, $ionicLoading) {
+	var wordList = ['Walk','Hike','Experience','Live','Explore'];
+  $scope.explore = 'Run';
+
+  function printList(input){
+    return $timeout(function(){
+      return $scope.explore = input;
+    },1000);
+  }
+
+  function run(objects) {
+      var cntr = 0;
+      function next() {
+          if (cntr < objects.length) {
+              printList(objects[cntr++]).then(next);
+          }
+      }
+      next();
+  }
+  run(wordList);
 })
+
 
 .controller('commCtrl', function($scope,$cordovaGeolocation) {
 
@@ -161,11 +181,11 @@ console.log(9);
     });
   });
 
- $scope.onSubmit = function($rootScope,$state, info){
-    $rootScope.info = info;
-    console.log(info);
-    console.log($rootScope.info);
- }
+
+})
+
+
+.controller('communityCtrl',function($scope){
 
 });
 
