@@ -22,7 +22,17 @@ img#HomeHiker{
 	margin:0;
 	float:left;
 	text-align: center;
-	width:100%;
+	width:50%;
+}
+
+#inspire div#left{
+	padding-right:0.25em;
+	text-align: right;
+}
+
+#inspire div#right{
+	padding-left:0.25em;
+	text-align: left;	
 }
 
 .scroll{

@@ -4,17 +4,8 @@ module
 
 	var wordList = ['Walk','Hike','Experience','Live','Explore'];
   $scope.explore = 'Run';
-  // function define($in){
-  //   console.log("TEST")
-  //   if($in.length == 0)
-  //     return $in;
-  //   $scope.explore = $in.pop();
-  //   define($in).then(function(response){
-  //       return define($in);
-  //     },1000);
-  // }
 
-  function doSomething(input){
+  function printList(input){
     return $timeout(function(){
       return $scope.explore = input;
     },1000);
@@ -22,17 +13,14 @@ module
 
   function run(objects) {
       var cntr = 0;
-      console.log(objects);
       function next() {
           if (cntr < objects.length) {
-              doSomething(objects[cntr++]).then(next);
+              printList(objects[cntr++]).then(next);
           }
       }
       next();
   }
-
   run(wordList);
-
 })
 
 
