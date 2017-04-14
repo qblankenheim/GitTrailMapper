@@ -16,6 +16,11 @@ img#HomeHiker{
 	margin: 0 25%;
 }
 
+#inspire{
+	display:inline-block;
+	width: 100%;
+}
+
 #inspire div{
 	font-weight: bold;
 	font-size: 2em;
