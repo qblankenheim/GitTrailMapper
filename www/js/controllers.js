@@ -150,19 +150,16 @@ console.log(9);
         position: event.latLng
       });
 
-
-      console.log($rootScope.info);
-
       var newMarkerInfo = new google.maps.InfoWindow({
-        content:$scope.info
+        content:"Empty"
       });
-
-
 
       google.maps.event.addListener(newMarker,'click', function($scope) {
         newMarkerInfo.open($scope.map, newMarker);
+        $rootScope.currMarkerInfo = newMarkerInfo;
+        $rootScope.info = newMarkerInfo.getContent();
+        console.log($rootScope.info);
       });
-
 
 
 
@@ -181,11 +178,13 @@ console.log(9);
     });
   });
 
+  $scope.editInfo = function (newInfo){
+    $rootScope.currMarkerInfo.setContent(newInfo);
 
-})
+
+  }
 
 
-.controller('communityCtrl',function($scope){
 
 });
 
