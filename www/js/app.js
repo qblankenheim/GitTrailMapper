@@ -1,4 +1,4 @@
-var module = angular.module('starter', ['ionic', 'ngCordova'])
+var module = angular.module('starter', ['ionic', 'ngCordova','ngAnimate'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
