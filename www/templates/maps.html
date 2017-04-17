@@ -1,7 +1,9 @@
 
 <ion-view view-title="Maps">
   <ion-content class="background">
-    <h1>Create a Trail</h1>
+    <h1> Make trails</h1>
+    <input type="text"  ng-model='$parent.trailName' name="txt2">
+    <button type="button" ng-click = "trailCreation()">Create a Trail</button>
     <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
   </ion-content>
 </ion-view>

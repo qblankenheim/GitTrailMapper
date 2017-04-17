@@ -1,5 +1,6 @@
-
 module
+
+
 .controller('homeCtrl', function($scope, $ionicLoading, $timeout) {
 
 	var wordList = ['Walk','Hike','Experience','Live','Explore'];
@@ -34,7 +35,6 @@ module
       });
   }
 
-console.log(9);
   // var options = {timeout: 10000, enableHighAccuracy: true};
    //var latLng = new google.maps.LatLng(43.071278, -89.406797);
   var posOptions = {timeout: 10000, enableHighAccuracy: false};
@@ -45,12 +45,9 @@ console.log(9);
     .getCurrentPosition(posOptions)
 
     .then(function (position) {
-       lat  = position.coords.latitude,
+      lat  = position.coords.latitude,
       long = position.coords.longitude,
-      console.log(lat + '   ' + long)
-      console.log(45);
-      var latLng = new google.maps.LatLng(lat,long);
-      console.log(47);
+      latLng = new google.maps.LatLng(lat,long);
       // var latLng = $cordovaGeoLocation.getCurrentPosition();
       var mapOptions = {
         center: latLng,
@@ -85,9 +82,7 @@ console.log(9);
       lat  = position.coords.latitude,
       long = position.coords.longitude,
       console.log(lat + '' + long)
-      console.log(45);
       var latLng = new google.maps.LatLng(lat,long);
-      console.log(47);
       // var latLng = $cordovaGeoLocation.getCurrentPosition();
       var mapOptions = {
         center: latLng,
@@ -113,10 +108,25 @@ console.log(9);
 
 .controller('mapsCtrl', function($scope, $state) {
 
-  function writeTrailData(id,name,length,path) {
-    firebase.database().ref('trails/' +id).set({
-      trailName: name,
-      trailLength: length,
+  function initAuthentication(onAuthSuccess) {
+    firebase.authAnonymously(function(error, authData) {
+      if (error) {
+        console.log('Login Failed!', error);
+      } else {
+        data.sender = authData.uid;
+        onAuthSuccess();
+      }
+    }, {remember: 'sessionOnly'});  // Users will get a new id for every session.
+  }
+
+  function trailCreation() {
+    var trailName = $scope.trailName;
+    var trailPath = $scope.flightpath;
+    writeTrailData(trailName,trailPath);
+  }
+
+  function writeTrailData(name,path) {
+    firebase.database().ref('trails/' + name).set({
       trailPath: path
     });
   }
@@ -198,6 +208,7 @@ console.log(9);
       });
 
       $scope.flightPath.setMap($scope.map);
+      console.log($scope.flightPath);
 
     });
   });
@@ -207,3 +218,77 @@ console.log(9);
 .controller('communityCtrl',function($scope){
 
 })
+
+
+.controller('logCtrl', function($scope, $ionicLoading, $timeout) {
+console.log("in logctrl");
+  $scope.username = "john.doe@gmail.com";
+  $scope.password = "abc123";
+  $scope.logoutButton = {};
+  $scope.logoutButton.visibility = 'hidden';
+
+  $scope.createFirebaseUser = function(email, password) {
+    return firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
+      $ionicLoading.show({ template: 'Created Firebase User!', noBackdrop: true, duration: 1000 });
+    }).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      $ionicLoading.show({ template: 'Creation of user unsuccessful! Try again!', noBackdrop: true, duration: 1000 });
+    });
+  };
+
+  $scope.loginFirebaseUser = function(email, password) {
+    return firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+    });
+  };
+
+  $scope.logoutFirebaseUser = function () {
+    firebase.auth().signOut().then(function() {
+      console.log('Signed Out Firebase user');
+      $ionicLoading.show({ template: 'Logout successful!', noBackdrop: true, duration: 1000 });
+      $scope.logoutButton.visibility = 'hidden';
+    }, function(error) {
+      console.error('Sign Out Error', error);
+      $ionicLoading.show({ template: 'Logout Unsuccessful!', noBackdrop: true, duration: 1000 });
+    });
+  }
+
+  $scope.init = function () {
+
+    if (!firebase.auth().currentUser) {
+        // Show modal with description of events
+        $ionicLoading.show({ template: 'Please log in', noBackdrop: true, duration: 1000 });
+      } else {
+        // If successful login, then currentUser is set and display event modal
+        // Show modal with description of events
+        $scope.logoutButton.username = firebase.auth().currentUser.email;
+        $scope.logoutButton.visibility = 'visible';
+      }
+  }
+
+  $scope.init();
+
+  $scope.attemptFirebaseLogin = function () {
+    console.log("Attempting firebase login with username: "+$scope.username+" | password: "+$scope.password);
+    $scope.loginFirebaseUser($scope.username, $scope.password).then(function () {
+      // Check if currentUser is set (we were succesfully able to login)
+      if (!firebase.auth().currentUser) {
+        // Show modal with description of events
+        $ionicLoading.show({ template: 'Login Unsuccessful! Check credentials, check connection or create user', noBackdrop: true, duration: 1000 });
+      } else {
+        // If successful login, then currentUser is set and display event modal
+        // Show modal with description of events
+        $ionicLoading.show({ template: 'Sucessful login with existing user', noBackdrop: true, duration: 1000 });
+        $scope.logoutButton.username = firebase.auth().currentUser.email;
+        $scope.logoutButton.visibility = 'visible';
+      }
+    });
+  };
+
+  $scope.attemptCreateFirebaseUser = function () {
+    $scope.createFirebaseUser($scope.username, $scope.password);
+  }
+
+});
