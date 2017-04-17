@@ -119,17 +119,29 @@ module
     }, {remember: 'sessionOnly'});  // Users will get a new id for every session.
   }
 
-  function trailCreation() {
+  $scope.trailCreation = function() {
+    console.log("attempting to create trail");
     var trailName = $scope.trailName;
-    var trailPath = $scope.flightpath;
-    writeTrailData(trailName,trailPath);
+    var trailPath = $scope.flightPlanCoordinates;
+    createTrailName(trailName);
+    createTrailPath(trailName, trailPath)
   }
 
-  function writeTrailData(name,path) {
+  function createTrailName(name) {
     firebase.database().ref('trails/' + name).set({
-      trailPath: path
+      trailName: name,
     });
   }
+
+    function createTrailPath(name, path) {
+      var length = path.length;
+      for (i=0; i<length; i++) {
+        firebase.database().ref('trails/' + name + '/path/' + i).set({
+          lat: path.lat,
+          lng: path.lng
+        });
+      }
+    }
 
 
   var options = {timeout: 10000, enableHighAccuracy: true};
@@ -290,5 +302,10 @@ console.log("in logctrl");
   $scope.attemptCreateFirebaseUser = function () {
     $scope.createFirebaseUser($scope.username, $scope.password);
   }
+});
 
+module.run(function($ionicPlatform, $rootScope, $ionicHistory) {
+  $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
+    $ionicHistory.clearCache();
+  });
 });
