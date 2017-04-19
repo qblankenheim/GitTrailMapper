@@ -157,8 +157,10 @@ console.log(9);
       google.maps.event.addListener(newMarker,'click', function($scope) {
         newMarkerInfo.open($scope.map, newMarker);
         $rootScope.currMarkerInfo = newMarkerInfo;
+        info.value = newMarkerInfo.getContent();
         $rootScope.info = newMarkerInfo.getContent();
-        console.log($rootScope.info);
+
+
       });
 
 
@@ -180,6 +182,8 @@ console.log(9);
 
   $scope.editInfo = function (newInfo){
     $rootScope.currMarkerInfo.setContent(newInfo);
+    info.value = "";
+    console.log($rootScope.info);
 
 
   }
