@@ -1,3 +1,5 @@
+var database = firebase.database();
+
 var module = angular.module('starter', ['ionic', 'ngCordova'])
 
 .run(function($ionicPlatform) {
@@ -48,6 +50,15 @@ var module = angular.module('starter', ['ionic', 'ngCordova'])
       }
     }
   })
-  $urlRouterProvider.otherwise("/tabs/home");
+    .state('tabs.login',{
+      url:"/login",
+      views:{
+        'login':{
+          templateUrl:"templates/login.html",
+          controller: 'logCtrl'
+        }
+      }
+    })
+  $urlRouterProvider.otherwise("/tabs/login");
   $ionicConfigProvider.tabs.position('bottom');
 })
