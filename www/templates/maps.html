@@ -9,7 +9,7 @@
     <div class = "menu" id = "menu1">
       <h3>Create a New Trail or Edit Current One</h3>
       <button ng-click = "trailCreation()">Create a New Trail</button>
-      <button ng-click = "button1Click()">Edit a Current Trail</button>
+      <button>Edit a Current Trail (Doesn't work)</button>
       <input type="text"  ng-model='$parent.trailName' name="txt2">
 
     </div>
@@ -18,13 +18,14 @@
       <h3>Create a new Marker or Finish Trail</h3>
       <button ng-click = "newMarker()">New Marker</button>
       <button ng-click = "finishTrail()">Finish Trail</button>
-      <input type = "text" placeholder="Marker Name" ></input>
+      <input type = "text" placeholder="Marker Name" ng-model = "$parent.currentMarkerName"></input>
     </div>
 
     <div class = "menu" id = "menu3">
       <h3>Use Current Position or Click On Map and Add Position Manually</h3>
       <button ng-click = "useCurrentPosition()">Current Position</button>
       <button ng-click = "useManualPosition()">Manually Add Position</button>
+      <input type = "text" placeholder="Marker info..." ng-model = "$parent.currentMarkerInfo"></input>
 
     </div>
   </ion-content>
