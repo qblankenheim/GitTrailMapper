@@ -120,6 +120,7 @@ module
   }
 
   $scope.trailCreation = function() {
+    $scope.button1Click();
     console.log("attempting to create trail");
     var trailName = $scope.trailName;
     var trailPath = $scope.flightPlanCoordinates;
@@ -225,6 +226,40 @@ module
     });
   });
 
+  $scope.newMarker = function(){
+$scope.button2Click();
+  };
+  $scope.finishTrail = function(){
+$scope.button3Click();
+  };
+  $scope.useCurrentPosition = function(){
+$scope.button1Click();
+  };
+  $scope.useManualPosition = function(){
+$scope.button1Click();
+  };
+
+  $scope.button1Click = function(){
+    document.getElementById('menu1').style.visibility = 'hidden';
+    document.getElementById('menu1').style.display = "none";
+    document.getElementById('menu2').style.display = "block";
+    document.getElementById('menu2').style.visibility = 'visible';
+    document.getElementById('menu3').style.visibility = 'hidden';
+  };
+  $scope.button2Click = function(){
+    document.getElementById('menu1').style.visibility = 'hidden';
+    document.getElementById('menu2').style.visibility = 'hidden';
+    document.getElementById('menu2').style.display = "none";
+    document.getElementById('menu3').style.display = "block";
+    document.getElementById('menu3').style.visibility = 'visible';
+  };
+  $scope.button3Click = function(){
+    document.getElementById('menu1').style.visibility = 'visible';
+    document.getElementById('menu2').style.visibility = 'hidden';
+    document.getElementById('menu3').style.visibility = 'hidden';
+    document.getElementById('menu3').style.display = "none";
+    document.getElementById('menu1').style.display = "block";
+  }
 })
 
 .controller('communityCtrl',function($scope){
@@ -308,4 +343,11 @@ module.run(function($ionicPlatform, $rootScope, $ionicHistory) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
     $ionicHistory.clearCache();
   });
+
+
+
+
+
+
+
 });
