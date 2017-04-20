@@ -106,7 +106,7 @@ module
 
 })
 
-.controller('mapsCtrl', function($scope, $state) {
+.controller('mapsCtrl', function($scope, $state, $cordovaGeolocation) {
 
   function initAuthentication(onAuthSuccess) {
     firebase.authAnonymously(function(error, authData) {
@@ -119,30 +119,7 @@ module
     }, {remember: 'sessionOnly'});  // Users will get a new id for every session.
   }
 
-  $scope.trailCreation = function() {
-    $scope.button1Click();
-    console.log("attempting to create trail");
-    var trailName = $scope.trailName;
-    var trailPath = $scope.flightPlanCoordinates;
-    createTrailName(trailName);
-    createTrailPath(trailName, trailPath)
-  }
 
-  function createTrailName(name) {
-    firebase.database().ref('trails/' + name).set({
-      trailName: name,
-    });
-  }
-
-    function createTrailPath(name, path) {
-      var length = path.length;
-      for (i=0; i<length; i++) {
-        firebase.database().ref('trails/' + name + '/path/' + i).set({
-          lat: path.lat,
-          lng: path.lng
-        });
-      }
-    }
 
 
   var options = {timeout: 10000, enableHighAccuracy: true};
@@ -164,7 +141,7 @@ module
 
   $scope.map = new google.maps.Map(document.getElementById("map1"), mapOptions);
 
-  google.maps.event.addListenerOnce($scope.map, 'idle', function () {
+  /*google.maps.event.addListenerOnce($scope.map, 'idle', function () {
     var marker = new google.maps.Marker({
       map: $scope.map,
       animation: google.maps.Animation.DROP,
@@ -225,20 +202,118 @@ module
 
     });
   });
-
+*/
+$scope.currentPath = [];
+$scope.isWaiting = false;
+$scope.currentMarkerInfo = "";
+$scope.currentPathInfo = [];
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+  $scope.createTrailName = function(name) {
+    $scope.button1Click();
+    firebase.database().ref('trails/' + name).set({
+      trailName: name,
+    });
+  };
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+  function createTrailPath(name, path, info) {
+    var length = path.length;
+    for (i=0; i<length; i++) {
+      firebase.database().ref('trails/' + name + '/coords/' + i).set({
+        // lat: path.lat,
+        // lng: path.lng
+        coords: path.pop(),
+        info: info.pop()
+      });
+    }
+  }
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+  // $scope.trailCreation = function() {
+  //   $scope.button1Click();
+  //   console.log("attempting to create trail");
+  //   var trailName = $scope.trailName;
+  //   var trailPath = $scope.flightPlanCoordinates;
+  //   createTrailName(trailName);
+  //   createTrailPath(trailName, trailPath)
+  // };
+///////////////////////////////////////////////////////////////////////////////////////////////////////
   $scope.newMarker = function(){
 $scope.button2Click();
   };
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
   $scope.finishTrail = function(){
 $scope.button3Click();
-  };
-  $scope.useCurrentPosition = function(){
-$scope.button1Click();
-  };
-  $scope.useManualPosition = function(){
-$scope.button1Click();
+createTrailPath($scope.trailName, $scope.currentPath, $scope.currentPathInfo);
+
+$scope.currentPath.clear();
+$scope.currentPathInfo.clear();
   };
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  $scope.useCurrentPosition = function(){
+
+    $scope.button1Click();
+
+    var posOptions = {timeout: 10000, enableHighAccuracy: false};
+    var lat;
+    var long;
+    console.log("looking for position");
+    $cordovaGeolocation
+      .getCurrentPosition(posOptions)
+
+      .then(function (position) {
+        lat = position.coords.latitude,
+          long = position.coords.longitude,
+        $scope.currentPath.push([lat, long]);
+        $scope.currentPathInfo.push($scope.currentMarkerInfo);
+        console.log(lat + "  " + long);
+        position = null;
+      }, function(err) {
+    console.log(err)
+  });
+
+    var watchOptions = {timeout : 3000, enableHighAccuracy: false};
+    var watch = $cordovaGeolocation.watchPosition(watchOptions);
+
+    watch.then();
+
+
+
+    lat = null;
+    long = null;
+  };
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  $scope.useManualPosition = function(){
+//
+$scope.isWaiting = true;
+  };
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  google.maps.event.addListener($scope.map, 'click', function (event) {
+   if($scope.isWaiting) {
+     var lat;
+     var long;
+
+     lat = event.latLng.lat();
+     long = event.latLng.lng();
+
+     $scope.currentPath.push([lat, long]);
+     $scope.currentPathInfo.push($scope.currentMarkerInfo);
+console.log(lat + "  " + long);
+     $scope.isWaiting = false;
+     $scope.button1Click();
+   }
+   else{
+
+   }
+  });
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
   $scope.button1Click = function(){
     document.getElementById('menu1').style.visibility = 'hidden';
     document.getElementById('menu1').style.display = "none";
