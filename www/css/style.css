@@ -55,7 +55,6 @@ img#HomeHiker{
 
 .menu{
   background-color: lightgreen;
-
   width: 100%;
   height:30%;
   position: relative;
@@ -65,17 +64,18 @@ img#HomeHiker{
 
 }
 #menu2{
-  visibility: hidden;
+	visibility: hidden;
 }
 #menu3{
-visibility: hidden;
+	visibility: hidden;
 }
-
 
 .header{
 	display:block;
 }
 
-#search-button{
-	position: absolute;
+button.trails{
+	border:0px;
+	padding: 10px;
+	width:25%;
 }

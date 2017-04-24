@@ -1,6 +1,4 @@
 module
-
-
 .controller('homeCtrl', function($scope, $ionicLoading, $timeout) {
 
 	var wordList = ['Walk','Hike','Experience','Live','Explore'];
@@ -26,7 +24,6 @@ module
 
 
 .controller('commCtrl', function($scope,$cordovaGeolocation) {
-
   function getTrail(trailID) {
     return firebase.database().ref('/trails/' + trailID).once('value').then(function(snapshot) {
       var trailName = snapshot.val().trailName;
@@ -120,12 +117,8 @@ module
   }
 
 
-
-
   var options = {timeout: 10000, enableHighAccuracy: true};
   var latLng = new google.maps.LatLng(43.071278, -89.406797);
-
-
   var mapOptions = {
     center: latLng,
     zoom: 21,
@@ -141,7 +134,8 @@ module
 
   $scope.map = new google.maps.Map(document.getElementById("map1"), mapOptions);
 
-  /*google.maps.event.addListenerOnce($scope.map, 'idle', function () {
+//
+  google.maps.event.addListenerOnce($scope.map, 'idle', function () {
     var marker = new google.maps.Marker({
       map: $scope.map,
       animation: google.maps.Animation.DROP,
@@ -185,10 +179,7 @@ module
         animation: google.maps.Animation.DROP,
         position: event.latLng
       });
-
-
       $scope.flightPlanCoordinates.push(event.latLng);
-
       $scope.flightPath = new google.maps.Polyline({
         path: $scope.flightPlanCoordinates,
         geodesic: true,
@@ -196,25 +187,24 @@ module
         strokeOpacity: 1.0,
         strokeWeight: 2
       });
-
       $scope.flightPath.setMap($scope.map);
       console.log($scope.flightPath);
-
     });
   });
-*/
-$scope.currentPath = [];
-$scope.isWaiting = false;
-$scope.currentMarkerInfo = "";
-$scope.currentPathInfo = [];
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+
+  $scope.currentPath = [];
+  $scope.isWaiting = false;
+  $scope.currentMarkerInfo = "";
+  $scope.currentPathInfo = [];
+
   $scope.createTrailName = function(name) {
     $scope.button1Click();
     firebase.database().ref('trails/' + name).set({
       trailName: name,
     });
   };
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   function createTrailPath(name, path, info) {
     var length = path.length;
     for (i=0; i<length; i++) {
@@ -226,7 +216,7 @@ $scope.currentPathInfo = [];
       });
     }
   }
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   // $scope.trailCreation = function() {
   //   $scope.button1Click();
   //   console.log("attempting to create trail");
@@ -235,22 +225,19 @@ $scope.currentPathInfo = [];
   //   createTrailName(trailName);
   //   createTrailPath(trailName, trailPath)
   // };
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   $scope.newMarker = function(){
-$scope.button2Click();
+  $scope.button2Click();
   };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   $scope.finishTrail = function(){
-$scope.button3Click();
-createTrailPath($scope.trailName, $scope.currentPath, $scope.currentPathInfo);
+    $scope.button3Click();
+    createTrailPath($scope.trailName, $scope.currentPath, $scope.currentPathInfo);
 
-$scope.currentPath.clear();
-$scope.currentPathInfo.clear();
+    $scope.currentPath.clear();
+    $scope.currentPathInfo.clear();
   };
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   $scope.useCurrentPosition = function(){
 
