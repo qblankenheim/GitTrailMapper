@@ -1,7 +1,21 @@
 
 <ion-view view-title="Maps">
-  <ion-content class="background">
-    <h1>Create a Trail</h1>
-    <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
-  </ion-content>
+
+  <ion-side-menus>
+    <!-- Left menu -->
+    <ion-side-menu side="left">
+    </ion-side-menu>
+
+    <ion-side-menu-content>
+    <!-- Main content, usually <ion-nav-view> -->
+	<ion-content class="background">
+		<div class="bar bar-header bar-balanced" style="text-align: center;">
+			<button menu-toggle id="search-button" class="button button-royal icon ion-search"></button>
+			<h1 style="margin:0px;font-size: 30px;width:100%;text-align: center;">Create a Trail</h1>
+		</div>
+		<div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
+		<div style="width:50px;height:50px;background-color: black;"></div>
+	</ion-content>
+    </ion-side-menu-content>
+  </ion-side-menus>
 </ion-view>
