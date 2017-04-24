@@ -1,7 +1,14 @@
+var isLoggedIn = false;
+
 module
 
 
-.controller('homeCtrl', function($scope, $ionicLoading, $timeout) {
+.controller('homeCtrl', function($scope, $ionicLoading, $timeout, $state) {
+
+  if (!isLoggedIn){
+    $state.go("tabs.login");
+    $ionicLoading.show({ template: 'Please login or create an account to continue', noBackdrop: true, duration: 2000 })
+  }
 
 	var wordList = ['Walk','Hike','Experience','Live','Explore'];
   $scope.explore = 'Run';
@@ -25,8 +32,12 @@ module
 })
 
 
-.controller('commCtrl', function($scope,$cordovaGeolocation) {
+.controller('commCtrl', function($scope,$cordovaGeolocation,$ionicLoading, $state) {
 
+  if (!isLoggedIn){
+      $state.go("tabs.login");
+      $ionicLoading.show({ template: 'Please login or create an account to continue', noBackdrop: true, duration: 2000 })
+    }
   function getTrail(trailID) {
     return firebase.database().ref('/trails/' + trailID).once('value').then(function(snapshot) {
       var trailName = snapshot.val().trailName;
@@ -106,7 +117,12 @@ module
 
 })
 
-.controller('mapsCtrl', function($scope, $state, $cordovaGeolocation) {
+.controller('mapsCtrl', function($scope, $state, $cordovaGeolocation,$ionicLoading) {
+
+    if (!isLoggedIn){
+        $state.go("tabs.login");
+        $ionicLoading.show({ template: 'Please login or create an account to continue', noBackdrop: true, duration: 2000 })
+    }
 
   function initAuthentication(onAuthSuccess) {
     firebase.authAnonymously(function(error, authData) {
@@ -237,20 +253,21 @@ $scope.currentPathInfo = [];
   // };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
   $scope.newMarker = function(){
-$scope.button2Click();
+    $scope.button2Click();
+
   };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
   $scope.finishTrail = function(){
-$scope.button3Click();
-createTrailPath($scope.trailName, $scope.currentPath, $scope.currentPathInfo);
+    $scope.button3Click();
+    createTrailPath($scope.trailName, $scope.currentPath, $scope.currentPathInfo);
 
-$scope.currentPath.clear();
-$scope.currentPathInfo.clear();
+    $scope.currentPath.clear();
+    $scope.currentPathInfo.clear();
   };
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   $scope.useCurrentPosition = function(){
 
@@ -305,7 +322,7 @@ $scope.isWaiting = true;
 
      $scope.currentPath.push([lat, long]);
      $scope.currentPathInfo.push($scope.currentMarkerInfo);
-console.log(lat + "  " + long);
+     console.log(lat + "  " + long);
      $scope.isWaiting = false;
      $scope.button1Click();
    }
@@ -337,12 +354,9 @@ console.log(lat + "  " + long);
   }
 })
 
-.controller('communityCtrl',function($scope){
-
-})
 
 
-.controller('logCtrl', function($scope, $ionicLoading, $timeout) {
+.controller('logCtrl', function($scope, $ionicLoading, $timeout,$state) {
 console.log("in logctrl");
   $scope.username = "john.doe@gmail.com";
   $scope.password = "abc123";
@@ -371,6 +385,7 @@ console.log("in logctrl");
       console.log('Signed Out Firebase user');
       $ionicLoading.show({ template: 'Logout successful!', noBackdrop: true, duration: 1000 });
       $scope.logoutButton.visibility = 'hidden';
+      isLoggedIn = false;
     }, function(error) {
       console.error('Sign Out Error', error);
       $ionicLoading.show({ template: 'Logout Unsuccessful!', noBackdrop: true, duration: 1000 });
@@ -405,6 +420,8 @@ console.log("in logctrl");
         $ionicLoading.show({ template: 'Sucessful login with existing user', noBackdrop: true, duration: 1000 });
         $scope.logoutButton.username = firebase.auth().currentUser.email;
         $scope.logoutButton.visibility = 'visible';
+        $state.go("tabs.home");
+        isLoggedIn = true;
       }
     });
   };
