@@ -9,6 +9,10 @@
     </author>
   <content src="index.html"/>
   <access origin="*"/>
+
+  <!-- Added this to force portrait orientation -->
+  <preference name="orientation" value="portrait" />
+  
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
