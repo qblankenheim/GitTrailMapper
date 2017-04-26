@@ -3,6 +3,12 @@
   <ion-side-menus>
     <!-- Left menu -->
     <ion-side-menu side="left">
+      <h1 ng-repeat="x in $parent.pathNames">{{x}}</h1>
+      <h1>TEST</h1>
+    </ion-side-menu>
+
+    <ion-side-menu side="bottom">
+    <h1>TEST</h1>
     </ion-side-menu>
 
     <ion-side-menu-content>
@@ -13,7 +19,7 @@
         <!--<button type="button" ng-click = "trailCreation()">Create a Trail</button>-->
         <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
 
-        <div class = "menu" id = "menu1">
+<!--         <div class = "menu" id = "menu1">
           <h3>Create a New Trail or Edit Current One</h3>
           <button ng-click = "createTrailName(trailName)">Create a New Trail</button>
           <button>Edit a Current Trail (Doesn't work)</button>
@@ -23,7 +29,7 @@
         <div class = "menu" id = "menu2">
           <h3>Create a new Marker or Finish Trail</h3>
           <button ng-click = "newMarker()">New Marker</button>
-          <button ng-click = "finishTrail()">Finish Trail</button>
+          <button ng-click="finishTrail()">Finish Trail</button>
           <input type = "text" placeholder="Marker Name" ng-model = "$parent.currentMarkerName"></input>
         </div>
 
@@ -32,17 +38,21 @@
           <button ng-click = "useCurrentPosition()">Current Position</button>
           <button ng-click = "useManualPosition()">Manually Add Position</button>
           <input type = "text" placeholder="Marker info..." ng-model = "$parent.currentMarkerInfo"></input>
-        </div>
+        </div> -->
 
-    		<div class="bar bar-footer bar-balanced" style="text-align: center;">
+        <input ng-if="$parent.textBox" class="slide" type="text" name="test" default="Enter New Trail Name">
+        <span style="position:absolute; top:20%;">Scope Value: {{$scope.textBox}}</span>
+        <span style="position:absolute; top:30%;">Parent Value: {{$parent.textBox}}</span>
+
+    		<div id = "map-nav-bar" class="bar bar-footer bar-balanced">
           <button menu-toggle id="search-button" class="button button-royal icon ion-search trails"></button>
-          <button id="new-button" class="button button-royal icon ion-plus trails"></button>
-    			<h1 style="margin:0px;font-size: 30px;width:100%;text-align: center;">Create a Trail</h1>
+          <button id="new-button" class="button button-royal icon ion-plus trails" ng-click="finishTrail()"></button>
+          <button id="new-button" class="button button-royal icon ion-location trails"></button>
     		</div>
-    		<div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
-    		<div style="width:50px;height:50px;background-color: black;"></div>
+
+    		<!-- <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div> -->
+    		<!-- <div style="width:50px;height:50px;background-color: black;"></div> -->
     	</ion-content>
     </ion-side-menu-content>
   </ion-side-menus>
-
 </ion-view>
