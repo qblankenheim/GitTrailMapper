@@ -40,10 +40,16 @@
           <input type = "text" placeholder="Marker info..." ng-model = "$parent.currentMarkerInfo"></input>
         </div> -->
 
-        <input ng-if="$parent.textBox" class="slide" type="text" name="test" default="Enter New Trail Name">
-        <span style="position:absolute; top:20%;">Scope Value: {{$scope.textBox}}</span>
-        <span style="position:absolute; top:30%;">Parent Value: {{$parent.textBox}}</span>
+        <form ng-if="$parent.textBox" class="slide" ng-show="$parent.textBox">
+          <input type="text" ng-model="$parent.$parent.trailName" >
+          <button class="button button-royal" ng-click="finishTrail()">SUBMIT</button>
+        </form>
 
+        <span style="position:absolute; top:20%;">Scope Value: {{$scope.trailName}}</span>
+        <span style="position:absolute; top:30%;">Parent Value: {{$parent.trailName}}</span>
+<!--         <span style="position:absolute; top:20%;">Scope Value: {{$scope.textBox}}</span>
+        <span style="position:absolute; top:30%;">Parent Value: {{$parent.textBox}}</span>
+ -->
     		<div id = "map-nav-bar" class="bar bar-footer bar-balanced">
           <button menu-toggle id="search-button" class="button button-royal icon ion-search trails"></button>
           <button id="new-button" class="button button-royal icon ion-plus trails" ng-click="finishTrail()"></button>
