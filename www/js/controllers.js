@@ -141,7 +141,6 @@ module
   },function(bad){
     console.log('BAD');
   });
-  // console.log($scope.pathNames);
 
   // Event listener that detects clicks on map and adds marker
   google.maps.event.addListener($scope.map, 'click', function (event) {
@@ -153,9 +152,8 @@ module
 
     $scope.markers.push(marker);
     $scope.flightPlanCoordinates.push(event.latLng);
-    google.maps.event.addListener(marker,'click',function(event){
+    console.log($scope.flightPlanCoordinates);
 
-    });
     $scope.flightPath = new google.maps.Polyline({
       path: $scope.flightPlanCoordinates,
       geodesic: true,
@@ -179,9 +177,10 @@ module
   }
 
   function createTrailPath(name, path, info) {
+    console.log("CREATING PATH");
     var user = convertUser($rootScope.username);
-    for (i=0; i<path.length; i++) {
-      var out = path.pop();
+    for(var ind in path){
+      var out = path[ind];
       firebase.database().ref('trails/'+ user + '/' + name + '/' + i).set({
         lat: out.lat(),
         lng: out.lng()
@@ -191,7 +190,9 @@ module
   }
 
   $scope.finishTrail = function(){
-    console.log("CREATE TRAIL PATH")
+    console.log("");
+    console.log("FINISH TRAIL");
+
     var user = convertUser($rootScope.username);
 
     if(user == null){

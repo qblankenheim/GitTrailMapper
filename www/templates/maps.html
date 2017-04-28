@@ -2,8 +2,15 @@
 <ion-view view-title="Maps">
   <ion-side-menus>
     <!-- Left menu -->
-    <ion-side-menu side="left">
-      <button style="width:100%" class="button button-royal" ng-repeat="x in $parent.pathNames">{{x}}</button>
+    <ion-side-menu side="left" scroll="true">
+      <h1>MY TRAILS</h1>
+      <!-- <button style="width:90%; margin:5%;" class="button button-royal" ng-repeat="x in $parent.pathNames">{{x}}</button> -->
+      <div class="card" ng-repeat="name in $parent.pathNames">
+        <h2>{{name}}</h2>
+        <div class="item item-text-wrap">
+          This is a basic Card which contains an item that has wrapping text.
+        </div>
+      </div>
     </ion-side-menu>
 
     <ion-side-menu-content>
@@ -13,7 +20,7 @@
 
         <form ng-if="$parent.textBox" class="slide" ng-show="$parent.textBox">
           <input type="text" ng-model="$parent.$parent.$parent.trailName" >
-          <button class="button button-royal" ng-click="finishTrail()">SUBMIT</button>
+          <button class="button button-royal" ng-click="$parent.$parent.$parent.finishTrail()">SUBMIT</button>
         </form>
 
     		<div id = "map-nav-bar" class="bar bar-footer bar-balanced">
