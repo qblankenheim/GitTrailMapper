@@ -22,7 +22,7 @@ module
   run(wordList);
 })
 
-.controller('commCtrl', function($scope,$cordovaGeolocation) {
+.controller('commCtrl', function($scope,$cordovaGeolocation, $q) {
   function getTrail(trailID) {
     return firebase.database().ref('/trails/' + trailID).once('value').then(function(snapshot) {
       var trailName = snapshot.val().trailName;
@@ -46,7 +46,7 @@ module
       // var latLng = $cordovaGeoLocation.getCurrentPosition();
       var mapOptions = {
         center: latLng,
-        zoom: 30,
+        zoom: 12,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: [{
               featureType: 'poi',
@@ -56,9 +56,9 @@ module
                      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
                    }]
       };
-      console.log(54);
+
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
-      console.log(56);
+
     }, function(err) {
       console.log(err)
     });
@@ -74,14 +74,14 @@ module
     },
 
     function(position) {
-      lat  = position.coords.latitude,
-      long = position.coords.longitude,
-      console.log(lat + '' + long)
+      lat  = position.coords.latitude;
+      long = position.coords.longitude;
+
       var latLng = new google.maps.LatLng(lat,long);
       // var latLng = $cordovaGeoLocation.getCurrentPosition();
       var mapOptions = {
         center: latLng,
-        zoom: 15,
+        zoom: 6,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: [{
               featureType: 'poi',
@@ -91,13 +91,121 @@ module
                      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
                    }]
       };
-      console.log(54);
+
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
-      console.log(56);
+
     }
   );
 
   watch.clearWatch();
+
+loadTrails();
+  function loadTrails(){
+
+    /// /setting up defer
+    var defer = $q.defer;
+    defer.resolve;
+  //calling database to get all trails in db variable
+    var db = firebase.database().ref('/trails/').once('value')
+      .then( function (ref) {
+        //for every user in database
+        ref.forEach( function(user) {
+          console.log(user.key);
+
+          //for every trail in a user
+          user.forEach(function(trail){
+            console.log(trail.key);
+
+            $scope.positions = [];
+            $scope.information = [];
+
+            //for every index in a trail
+            trail.forEach(function(index){
+              var lat;
+              var lng;
+              var info;
+
+              //for each feature in an index
+              index.forEach(function(value){
+                console.log(value.key);
+                if(value.key == "lat"){
+                  lat = value.val();
+                }
+                else if(value.key == ("lng")){
+                  lng = value.val();
+                }
+                else if(value.key == ("info")){
+                  info = value.val();
+                }
+                else{
+                  console.log("not good 137");
+                }
+              });
+              console.log(lat + " " + lng);
+              $scope.positions.push(new google.maps.LatLng(lat,lng));
+              $scope.information.push(info);
+            });
+
+            loadOneTrail($scope.positions, $scope.information);
+
+
+          });
+
+        });
+
+
+
+
+
+        var out = ref.val();
+        return defer.resolve;
+      },function (error){
+        console.log(error);
+        return defer.resolve;
+      })
+  }
+
+
+  function loadOneTrail(positions, information) {
+    //make markers
+
+    $scope.polylines = new google.maps.Polyline({
+        path: positions,
+        geodesic: true,
+        strokeColor: '#1e26ff',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+
+    $scope.polylines.setMap($scope.communitymap);
+
+    console.log(positions.length + "////////////////");
+    var i;
+    for( i = 0;i<=positions.length*2+1;i++){
+
+      var currpos = positions.pop();
+
+      var marker = new google.maps.Marker({
+        map: $scope.communitymap,
+        animation: google.maps.Animation.DROP,
+        position: currpos
+      });
+
+
+
+    }
+
+
+
+
+  }
+
+
+
+
+
+
+
 })
 
 .controller('mapsCtrl', function($scope, $state, $cordovaGeolocation, $rootScope, $q) {
@@ -116,7 +224,7 @@ module
   var latLng = new google.maps.LatLng(43.071278, -89.406797);
   var mapOptions = {
     center: latLng,
-    zoom: 15,
+    zoom: 17,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     styles: [{
           featureType: 'poi',
@@ -209,7 +317,7 @@ module
 
     if(!validTrailName($scope.trailName)){
       $scope.textBox = true;
-      console.log("NO NAME");      
+      console.log("NO NAME");
       console.log($scope.trailName);
       $scope.trailName = "TEST";
       return false;
@@ -224,7 +332,7 @@ module
 
 
 
-    // 
+    //
     $scope.flightPlanCoordinates=[];
     $scope.trailName = "";
 
@@ -441,7 +549,7 @@ module
       // Check if currentUser is set (we were succesfully able to login)
       if (!firebase.auth().currentUser) {
         // Show modal with description of events
-        $ionicLoading.show({ template: 'Login Unsuccessful! Check credentials, check connection or create user', 
+        $ionicLoading.show({ template: 'Login Unsuccessful! Check credentials, check connection or create user',
           noBackdrop: true, duration: 1000 });
       } else {
         // If successful login, then currentUser is set and display event modal
