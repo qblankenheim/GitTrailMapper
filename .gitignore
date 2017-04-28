@@ -8,4 +8,5 @@ android/
 www.zip
 resources/
 config.xml
-
+.idea/
+hooks/
