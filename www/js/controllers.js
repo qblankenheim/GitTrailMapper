@@ -136,7 +136,12 @@ module
   $scope.pathNames = [];
   $scope.textBox = false;
 
-  getTrailNames();
+  getTrailNames().then(function(good){
+    console.log('GOOD');
+  },function(bad){
+    console.log('BAD');
+  });
+  // console.log($scope.pathNames);
 
   // Event listener that detects clicks on map and adds marker
   google.maps.event.addListener($scope.map, 'click', function (event) {
@@ -164,14 +169,16 @@ module
 
   // Checks for valid trailname
   function validTrailName(name){
-    if(name == null || name == '' || $scope.pathNames.indexOf(name)<0)
+    console.log("VALIDATING TRAIL NAME")
+    console.log("NAME: ")
+    console.log(name);
+    if(name == null || name == '' || $scope.pathNames.indexOf(name)>=0)
       return false;
     else
       return true;
   }
 
   function createTrailPath(name, path, info) {
-    console.log(name);
     var user = convertUser($rootScope.username);
     for (i=0; i<path.length; i++) {
       var out = path.pop();
@@ -193,23 +200,25 @@ module
     }
 
     if(!validTrailName($scope.trailName)){
-      $scope.textBox = true;
-      console.log("NO NAME");      
+      if(!$scope.textBox){
+        $scope.textBox = true;
+      }else{
+        $scope.trailName='Invalid Trail Name';
+      }
+      console.log('INVALID TRAIL NAME: ');
       console.log($scope.trailName);
-      $scope.trailName = "TEST";
       return false;
     }
 
     $scope.textBox = false;
+
     if(createTrailPath($scope.trailName,$scope.flightPlanCoordinates)){
       console.log('PATH ADDED');
       $scope.pathNames.push($scope.trailName);
     } else
       console.log('NO PATH ADDED');
 
-
-
-    // 
+    ///// RESET ALL TRAIL RELATED VARS //////// 
     $scope.flightPlanCoordinates=[];
     $scope.trailName = "";
 
@@ -217,10 +226,34 @@ module
     var len = $scope.flightPaths.length;
     for(i = 0 ; i < len; i++)
       $scope.flightPaths[i].setMap(null);
+    $scope.flightPaths = [];
 
     len = $scope.markers.length;
     for(i = 0; i < len; i++)
       $scope.markers[i].setMap(null);
+    $scope.markers = [];
+    ////////////////////////////////////////////
+  };
+
+  function getTrailNames(){
+    console.log('Getting Trail Names');
+    var name = convertUser($rootScope.username);
+    var defer = $q.defer();
+    if(name == null)
+      return defer.reject();
+    return firebase.database().ref('/trails/'+name).once('value')
+    .then( function (ref) {
+        console.log(ref);
+        var out = ref.val();
+        var names = [];
+        for(name in out)
+          names.push(name);
+        $scope.pathNames = names;
+        return defer.resolve();
+      },function (error){
+        console.log(error);
+        return defer.reject();
+    })
   };
 
   ////////////////// Adds initial marker at CS Building  //////////////////////////
@@ -257,20 +290,6 @@ module
   // });
   ///////////////////////////////////////////////////////////////////////////////////
 
-
-
-  // $scope.currentPath = [];
-  // $scope.isWaiting = false;
-  // $scope.currentMarkerInfo = "";
-  // $scope.currentPathInfo = [];
-
-  // $scope.createTrailName = function(name) {
-  //   $scope.button1Click();
-  //   firebase.database().ref('trails/' + name).set({
-  //     trailName: name,
-  //   });
-  // };
-
   //////////////  GET CURRENT POSITION  //////////////////
   // $scope.useCurrentPosition = function(){
   //   $scope.button1Click();
@@ -297,54 +316,6 @@ module
   //   long = null;
   // };
   /////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // $scope.useManualPosition = function(){
-  //   $scope.isWaiting = true;
-  // }; Q
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  // // Add manually waits
-  // google.maps.event.addListener($scope.map, 'click', function (event) {
-  //   if($scope.isWaiting) {
-  //     var lat;
-  //     var long;
-
-  //     lat = event.latLng.lat();
-  //     long = event.latLng.lng();
-
-  //     $scope.currentPath.push([lat, long]);
-  //     $scope.currentPathInfo.push($scope.currentMarkerInfo);
-  //     console.log(lat + "  " + long);
-  //     $scope.isWaiting = false;
-  //     $scope.button1Click();
-  //   }
-  //   else{
-
-  //   }
-  // });
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-  // $scope.button1Click = function(){
-  //   document.getElementById('menu1').style.visibility = 'hidden';
-  //   document.getElementById('menu1').style.display = "none";
-  //   document.getElementById('menu2').style.display = "block";
-  //   document.getElementById('menu2').style.visibility = 'visible';
-  //   document.getElementById('menu3').style.visibility = 'hidden';
-  // };
-  // $scope.button2Click = function(){
-  //   document.getElementById('menu1').style.visibility = 'hidden';
-  //   document.getElementById('menu2').style.visibility = 'hidden';
-  //   document.getElementById('menu2').style.display = "none";
-  //   document.getElementById('menu3').style.display = "block";
-  //   document.getElementById('menu3').style.visibility = 'visible';
-  // };
-  // $scope.button3Click = function(){
-  //   document.getElementById('menu1').style.visibility = 'visible';
-  //   document.getElementById('menu2').style.visibility = 'hidden';
-  //   document.getElementById('menu3').style.visibility = 'hidden';
-  //   document.getElementById('menu3').style.display = "none";
-  //   document.getElementById('menu1').style.display = "block";
-  // }
 })
 
 .controller('logCtrl', function($scope, $ionicLoading, $timeout, $rootScope) {
@@ -432,7 +403,6 @@ module
   });
 });
 
-
 // Converts the users email to a firebase compatible database entry name
 function convertUser(name){
   if(name == null)
@@ -445,27 +415,3 @@ function convertUser(name){
       temp += name[i];
   return temp;
 }
-
-function getTrailNames(){
-  console.log('Getting Trail Names');
-  var name = convertUser($rootScope.username);
-  var defer = $q.defer;
-  defer.resolve;
-  if(name == null)
-    return defer;
-  return firebase.database().ref('/trails/'+name).once('value')
-  .then( function (ref) {
-      var out = ref.val();
-      var names = [];
-      for(name in out)
-        names.push(name);
-      $scope.pathNames = names;
-      return defer.resolve;
-    },function (error){
-      console.log(error);
-      return defer.resolve;
-  })
-};
-
-
-
