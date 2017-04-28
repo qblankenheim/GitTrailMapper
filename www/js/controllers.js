@@ -162,13 +162,21 @@ module
   getTrailNames();
 
   // Event listener that detects clicks on map and adds marker
+
   $scope.isNewMarker = false;
+
   google.maps.event.addListener($scope.map, 'click', function (event) {
     var marker = new google.maps.Marker({
       map: $scope.map,
       animation: google.maps.Animation.DROP,
       position: event.latLng
     });
+
+    var infoWindow = new google.maps.infoWindow({
+      content:"Null"
+    });
+
+    $rootScope.infoWindow = infoWindow;
 
     $scope.isNewMarker = true;
     $scope.markers.push(marker);
@@ -186,6 +194,11 @@ module
     $scope.flightPath.setMap($scope.map);
     $scope.flightPaths.push($scope.flightPath);
   });
+
+  //take the info and add it to the info window on rootScope
+  $scope.onInfoSubmit = function(info){
+    $scope.isNewMarker = false;
+  }
 
   function convertUser(name){
     if(name == null)
@@ -277,6 +290,7 @@ module
     for(i = 0; i < len; i++)
       $scope.markers[i].setMap(null);
   };
+
 
   function getTrailNames(){
     console.log('Getting Trail Names');
