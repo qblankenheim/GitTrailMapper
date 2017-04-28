@@ -158,12 +158,11 @@ module
   $scope.trailName = null;
   $scope.pathNames = [];
   $scope.textBox = false;
+  $scope.isNewMarker = false;
 
   getTrailNames();
 
   // Event listener that detects clicks on map and adds marker
-
-  $scope.isNewMarker = false;
 
   google.maps.event.addListener($scope.map, 'click', function (event) {
     var marker = new google.maps.Marker({
@@ -172,13 +171,22 @@ module
       position: event.latLng
     });
 
-    var infoWindow = new google.maps.infoWindow({
+    var infoWindow = new google.maps.InfoWindow({
       content:"Null"
     });
 
-    $rootScope.infoWindow = infoWindow;
 
-    $scope.isNewMarker = true;
+    google.maps.event.addListener(marker,'click', function($scope) {
+
+            infoWindow.open($scope.map, marker);
+            $rootScope.currMarkerInfo = infoWindow;
+            //info.value = infoWindow.getContent();
+            $rootScope.info = infoWindow.getContent();
+            $scope.isNewMarker = true;
+            console.log($scope.isNewMarker);
+
+          });
+
     $scope.markers.push(marker);
     $scope.flightPlanCoordinates.push(event.latLng);
     google.maps.event.addListener(marker,'click',function(event){
@@ -197,7 +205,9 @@ module
 
   //take the info and add it to the info window on rootScope
   $scope.onInfoSubmit = function(info){
-    $scope.isNewMarker = false;
+    $rootScope.currMarkerInfo.setContent(info);
+    info.value = "";
+    //$scope.isNewMarker = false;
   }
 
   function convertUser(name){

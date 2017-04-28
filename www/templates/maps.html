@@ -46,7 +46,7 @@
         </form>
 
         <form ng-if = "$parent.isNewMarker" class = "slide">
-          <input type = "text" ng-model = "$parent.info" placeholder = "Marker Description">
+          <input id="info" type="text" ng-model="$parent.info" placeholder="Marker Description">
           <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Submit</button>
         </form>
 
