@@ -162,6 +162,7 @@ module
   getTrailNames();
 
   // Event listener that detects clicks on map and adds marker
+  $scope.isNewMarker = false;
   google.maps.event.addListener($scope.map, 'click', function (event) {
     var marker = new google.maps.Marker({
       map: $scope.map,
@@ -169,6 +170,7 @@ module
       position: event.latLng
     });
 
+    $scope.isNewMarker = true;
     $scope.markers.push(marker);
     $scope.flightPlanCoordinates.push(event.latLng);
     google.maps.event.addListener(marker,'click',function(event){
