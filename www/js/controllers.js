@@ -162,18 +162,7 @@ module
     $scope.flightPaths.push($scope.flightPath);
   });
 
-  function convertUser(name){
-    if(name == null)
-      return name;
-    var temp = '';
-    for(i = 0; i < name.length; i++)
-      if(name[i]=='.')
-        temp +='_';
-      else
-        temp += name[i];
-    return temp;
-  }
-
+  // Checks for valid trailname
   function validTrailName(name){
     if(name == null || name == '' || $scope.pathNames.indexOf(name)<0)
       return false;
@@ -193,10 +182,6 @@ module
     }
     return true;
   }
-
-  $scope.newMarker = function(){
-    $scope.button2Click();
-  };
 
   $scope.finishTrail = function(){
     console.log("CREATE TRAIL PATH")
@@ -237,28 +222,6 @@ module
     for(i = 0; i < len; i++)
       $scope.markers[i].setMap(null);
   };
-
-  function getTrailNames(){
-    console.log('Getting Trail Names');
-    var name = convertUser($rootScope.username);
-    var defer = $q.defer;
-    defer.resolve;
-    if(name == null)
-      return defer;
-    return firebase.database().ref('/trails/'+name).once('value')
-    .then( function (ref) {
-        var out = ref.val();
-        var names = [];
-        for(name in out)
-          names.push(name);
-        $scope.pathNames = names;
-        return defer.resolve;
-      },function (error){
-        console.log(error);
-        return defer.resolve;
-    })
-  };
-
 
   ////////////////// Adds initial marker at CS Building  //////////////////////////
   // google.maps.event.addListenerOnce($scope.map, 'idle', function () {
@@ -461,11 +424,48 @@ module
   //   var user= snapshot.val().name;
   //   console.log(user)
   // });
-});
+})
 
-module.run(function($ionicPlatform, $rootScope, $ionicHistory) {
+.run(function($ionicPlatform, $rootScope, $ionicHistory) {
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
     // $ionicHistory.clearCache();
   });
 });
+
+
+// Converts the users email to a firebase compatible database entry name
+function convertUser(name){
+  if(name == null)
+    return name;
+  var temp = '';
+  for(i = 0; i < name.length; i++)
+    if(name[i]=='.')
+      temp +='_';
+    else
+      temp += name[i];
+  return temp;
+}
+
+function getTrailNames(){
+  console.log('Getting Trail Names');
+  var name = convertUser($rootScope.username);
+  var defer = $q.defer;
+  defer.resolve;
+  if(name == null)
+    return defer;
+  return firebase.database().ref('/trails/'+name).once('value')
+  .then( function (ref) {
+      var out = ref.val();
+      var names = [];
+      for(name in out)
+        names.push(name);
+      $scope.pathNames = names;
+      return defer.resolve;
+    },function (error){
+      console.log(error);
+      return defer.resolve;
+  })
+};
+
+
 
