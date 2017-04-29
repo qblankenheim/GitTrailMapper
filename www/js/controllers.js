@@ -1,5 +1,6 @@
 var isLoggedIn = false;
 
+
 module
 
 
@@ -157,6 +158,7 @@ module
   $scope.messages = [];
   $scope.trailName = null;
   $scope.pathNames = [];
+  $scope.descriptions = [];
   $scope.textBox = false;
   $scope.isNewMarker = false;
 
@@ -171,27 +173,24 @@ module
       position: event.latLng
     });
 
+
     var infoWindow = new google.maps.InfoWindow({
       content:"Null"
     });
 
+    $scope.isNewMarker = true;
 
     google.maps.event.addListener(marker,'click', function($scope) {
+      infoWindow.open($scope.map, marker);
+      $rootScope.currMarkerInfo = infoWindow;
+      //info.value = infoWindow.getContent();
+      $rootScope.info = infoWindow.getContent();
+    });
 
-            infoWindow.open($scope.map, marker);
-            $rootScope.currMarkerInfo = infoWindow;
-            //info.value = infoWindow.getContent();
-            $rootScope.info = infoWindow.getContent();
-            $scope.isNewMarker = true;
-            console.log($scope.isNewMarker);
-
-          });
 
     $scope.markers.push(marker);
     $scope.flightPlanCoordinates.push(event.latLng);
-    google.maps.event.addListener(marker,'click',function(event){
 
-    });
     $scope.flightPath = new google.maps.Polyline({
       path: $scope.flightPlanCoordinates,
       geodesic: true,
@@ -203,11 +202,13 @@ module
     $scope.flightPaths.push($scope.flightPath);
   });
 
+
   //take the info and add it to the info window on rootScope
   $scope.onInfoSubmit = function(info){
     $rootScope.currMarkerInfo.setContent(info);
-    info.value = "";
-    //$scope.isNewMarker = false;
+    $scope.descriptions.push(info);
+    $scope.info.value = null;
+    $scope.isNewMarker = false;
   }
 
   function convertUser(name){

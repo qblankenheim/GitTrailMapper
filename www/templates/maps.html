@@ -40,15 +40,18 @@
           <input type = "text" placeholder="Marker info..." ng-model = "$parent.currentMarkerInfo"></input>
         </div> -->
 
+
         <form ng-if="$parent.textBox" class="slide" ng-show="$parent.textBox">
           <input type="text" ng-model="$parent.$parent.trailName" >
           <button class="button button-royal" ng-click="finishTrail()">SUBMIT</button>
         </form>
 
         <form ng-if = "$parent.isNewMarker" class = "slide">
-          <input id="info" type="text" ng-model="$parent.info" placeholder="Marker Description">
-          <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Submit</button>
+          <input id="info" type="text" ng-model="info" placeholder="Marker Description">
+          <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Save Discription</button>
         </form>
+
+
 
         <span style="position:absolute; top:20%;">Scope Value: {{$scope.trailName}}</span>
         <span style="position:absolute; top:30%;">Parent Value: {{$parent.trailName}}</span>
