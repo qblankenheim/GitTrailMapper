@@ -186,18 +186,16 @@ module
 
       var currpos = positions.pop();
 
+
+
       var marker = new google.maps.Marker({
         map: $scope.communitymap,
         animation: google.maps.Animation.DROP,
-        position: currpos
+        position: currpos,
+
       });
 
-      var infoWindow = new google.maps.InfoWindow({
-            content: information.pop()
-          });
-      google.maps.event.addListener(marker, 'click', function () {
-        infoWindow.open($scope.communitymap, marker);
-      });
+          setMarkers(information.pop(), marker);
 
 
 
@@ -209,6 +207,18 @@ module
   }
 
 
+  function setMarkers(info, marker){
+
+    var infoWindow = new google.maps.InfoWindow({
+      content: info,
+      position: marker.getPosition()
+    });
+
+    google.maps.event.addListener(marker, 'click', function () {
+      infoWindow.open($scope.communitymap, marker);
+    });
+
+  }
 
 
 
