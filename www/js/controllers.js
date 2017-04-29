@@ -99,7 +99,8 @@ module
 
   watch.clearWatch();
 
-loadTrails();
+  loadTrails();
+
   function loadTrails(){
 
     /// /setting up defer
@@ -189,6 +190,13 @@ loadTrails();
         map: $scope.communitymap,
         animation: google.maps.Animation.DROP,
         position: currpos
+      });
+
+      var infoWindow = new google.maps.InfoWindow({
+            content: information.pop()
+          });
+      google.maps.event.addListener(marker, 'click', function () {
+        infoWindow.open($scope.communitymap, marker);
       });
 
 
