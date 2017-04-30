@@ -206,7 +206,7 @@ module
 
   }
 
-
+  //creates the markers, creates the instances
   function setMarkers(info, marker){
 
     var infoWindow = new google.maps.InfoWindow({
@@ -221,6 +221,9 @@ module
   }
 
 
+  $scope.reload = function(){
+    loadTrails();
+  }
 
 
 
