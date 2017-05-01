@@ -48,7 +48,7 @@ module
   var posOptions = {timeout: 10000, enableHighAccuracy: false};
   var lat;
   var long;
-
+/*
   $cordovaGeolocation
     .getCurrentPosition(posOptions)
 
@@ -110,7 +110,24 @@ module
     }
   );
 
-  watch.clearWatch();
+  watch.clearWatch();*/
+
+var latLng = new google.maps.LatLng(43.071278, -89.406797);
+var mapOptions = {
+        center: latLng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [{
+              featureType: 'poi',
+              stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+            }, {
+                     featureType: 'transit.station',
+                     stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+                   }]
+      };
+
+      $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+
 
   loadTrails();
 
@@ -233,12 +250,12 @@ module
 
   }
 
+
+
+  $scope.reload = function(){
+       loadTrails();
+     }
 })
-
-//  $scope.reload = function(){
-//    loadTrails();
-//  }
-
 
 
 .controller('mapsCtrl', function($scope, $state, $cordovaGeolocation, $rootScope, $q) {
