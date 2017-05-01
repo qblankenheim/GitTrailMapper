@@ -4,12 +4,12 @@ var isLoggedIn = false;
 module
 
 
-.controller('homeCtrl', function($scope, $ionicLoading, $timeout, $state) {
 
-  if (!isLoggedIn){
-    $state.go("tabs.login");
-    $ionicLoading.show({ template: 'Please login or create an account to continue', noBackdrop: true, duration: 2000 })
-  }
+
+.controller('homeCtrl', function($scope, $ionicLoading, $timeout, $state, $rootScope) {
+
+  $rootScope.hideTabs = false;
+
 
 	var wordList = ['Walk','Hike','Experience','Live','Explore'];
   $scope.explore = 'Run';
@@ -32,12 +32,9 @@ module
   run(wordList);
 })
 
-.controller('commCtrl', function($scope,$cordovaGeolocation, $q, $ionicLoading, $state) {
 
-  if (!isLoggedIn){
-        $state.go("tabs.login");
-        $ionicLoading.show({ template: 'Please login or create an account to continue', noBackdrop: true, duration: 2000 })
-      }
+
+.controller('commCtrl', function($scope,$cordovaGeolocation, $q, $state) {
 
   function getTrail(trailID) {
     return firebase.database().ref('/trails/' + trailID).once('value').then(function(snapshot) {
@@ -222,7 +219,7 @@ module
 
   }
 
-
+  //creates the markers, creates the instances
   function setMarkers(info, marker){
 
     var infoWindow = new google.maps.InfoWindow({
@@ -238,13 +235,15 @@ module
 
 })
 
+//  $scope.reload = function(){
+//    loadTrails();
+//  }
 
-.controller('mapsCtrl', function($scope, $state, $cordovaGeolocation,$ionicLoading,$rootScope, $q) {
 
-    if (!isLoggedIn){
-        $state.go("tabs.login");
-        $ionicLoading.show({ template: 'Please login or create an account to continue', noBackdrop: true, duration: 2000 })
-    }
+
+.controller('mapsCtrl', function($scope, $state, $cordovaGeolocation, $rootScope, $q) {
+
+  $rootScope.hideTabs = false;
 
   function initAuthentication(onAuthSuccess) {
     firebase.authAnonymously(function(error, authData) {
@@ -604,14 +603,22 @@ module
 })
 
 
+
 .controller('logCtrl', function($scope, $ionicLoading, $timeout, $rootScope, $state,) {
+
+ // angular.element(document.querySelector("tabID")).display("hidden");
+$rootScope.hideTabs = true;
+
+
 
   $scope.username = "john.doe@gmail.com";
   $scope.password = "abc123";
   $scope.logoutButton = {};
   $scope.logoutButton.visibility = 'hidden';
+  $scope.logoutButton.visibility = 'hidden';
 
   $rootScope.username = $scope.username;
+
 
   $scope.createFirebaseUser = function(email, password) {
     return firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
@@ -635,7 +642,9 @@ module
       console.log('Signed Out Firebase user');
       $ionicLoading.show({ template: 'Logout successful!', noBackdrop: true, duration: 1000 });
       $scope.logoutButton.visibility = 'hidden';
-      isLoggedIn = false;
+
+      $rootScope.hideTabs = true;
+
     }, function(error) {
       console.error('Sign Out Error', error);
       $ionicLoading.show({ template: 'Logout Unsuccessful!', noBackdrop: true, duration: 1000 });
@@ -671,8 +680,10 @@ module
         $ionicLoading.show({ template: 'Sucessful login with existing user', noBackdrop: true, duration: 1000 });
         $scope.logoutButton.username = firebase.auth().currentUser.email;
         $scope.logoutButton.visibility = 'visible';
+        $rootScope.hideTabs = false;
         $state.go("tabs.home");
-        isLoggedIn = true;
+
+
       }
     });
   };
@@ -691,7 +702,10 @@ module
   $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams){
     // $ionicHistory.clearCache();
   });
-});
+}),
+
+
+
 
 // Converts the users email to a firebase compatible database entry name
 function convertUser(name){
@@ -705,3 +719,5 @@ function convertUser(name){
       temp += name[i];
   return temp;
 }
+
+
