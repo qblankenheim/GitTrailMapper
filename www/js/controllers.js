@@ -306,9 +306,10 @@ module
     });
 
 
-
     google.maps.event.addListener(marker,'click', function($scope) {
-      $scope.isNewMarker = true;
+
+      $rootScope.isNewMarker = true;
+      console.log($rootScope.isNewMarker);
       infoWindow.open($scope.map, marker);
       $rootScope.currMarkerInfo = infoWindow;
       //info.value = infoWindow.getContent();
@@ -320,7 +321,10 @@ module
     $scope.flightPlanCoordinates.push(event.latLng);
 
 
-    console.log($scope.flightPlanCoordinates);
+
+    console.log(infoWindow.content);
+    //console.log($scope.descriptions[$scope.descriptions.length -1]);
+    //console.log($scope.flightPlanCoordinates);
 
 
 
@@ -340,8 +344,9 @@ module
   $scope.onInfoSubmit = function(info){
     $rootScope.currMarkerInfo.setContent(info);
     $scope.descriptions.push(info);
-    $scope.info.value = ""  ;
-    $scope.isNewMarker = false;
+    info.value = "" ;
+    $rootScope.isNewMarker = false;
+
   }
 
   function convertUser(name){
@@ -374,11 +379,20 @@ module
     console.log("CREATING PATH");
     var user = convertUser($rootScope.username);
     for(var ind in path){
+      console.log(ind)
+      console.log($scope.descriptions[ind]);
+
+      if ($scope.descriptions[ind] == null){
+        $scope.descriptions[ind] = "Null";
+      }
+
       var out = path[ind];
-      firebase.database().ref('trails/'+ user + '/' + name + '/' + i).set({
+      firebase.database().ref('trails/'+ user + '/' + name + '/' + ind).set({
         lat: out.lat(),
-        lng: out.lng()
+        lng: out.lng(),
+        info: $scope.descriptions[ind]
       });
+
     }
     return true;
   }
@@ -394,6 +408,7 @@ module
   $scope.finishTrail = function(){
     console.log("");
     console.log("FINISH TRAIL");
+    console.log($scope.descriptions.length);
 
     var user = convertUser($rootScope.username);
 
@@ -425,7 +440,7 @@ module
 
     $scope.textBox = false;
 
-    if(createTrailPath($scope.trailName,$scope.flightPlanCoordinates)){
+    if(createTrailPath($scope.trailName,$scope.flightPlanCoordinates,$scope.descriptions)){
       console.log('PATH ADDED');
       $scope.pathNames.push($scope.trailName);
     } else
@@ -438,6 +453,7 @@ module
 
     $scope.flightPlanCoordinates=[];
     $scope.trailName = "";
+    $scope.descriptions = [];
 
     // Removes polylines
     var len = $scope.flightPaths.length;
@@ -588,7 +604,7 @@ module
 })
 
 
-.controller('logCtrl', function($scope, $ionicLoading, $timeout, $rootScope, $state) {
+.controller('logCtrl', function($scope, $ionicLoading, $timeout, $rootScope, $state,) {
 
   $scope.username = "john.doe@gmail.com";
   $scope.password = "abc123";

@@ -48,7 +48,7 @@
         </form>
 
 
-        <form ng-if = "$parent.isNewMarker" class = "slide">
+        <form ng-if = "$parent.$parent.$parent.isNewMarker && $parent.$parent.$parent.info == 'Null'" class = "slide">
           <input id="info" type="text" ng-model="info" placeholder="Marker Description">
           <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Save Discription</button>
         </form>
@@ -56,7 +56,7 @@
 
 
         <span style="position:absolute; top:20%;">Scope Value: {{$scope.trailName}}</span>
-        <span style="position:absolute; top:30%;">Parent Value: {{$parent.trailName}}</span>
+        <span style="position:absolute; top:30%;">Parent Value: {{$parent.$parent.$parent.isNewMarker}}</span>
 <!--         <span style="position:absolute; top:20%;">Scope Value: {{$scope.textBox}}</span>
         <span style="position:absolute; top:30%;">Parent Value: {{$parent.textBox}}</span>
  -->
