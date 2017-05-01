@@ -7,4 +7,10 @@ plugins/
 android/
 www.zip
 resources/
+<<<<<<< HEAD
 .idea/
+=======
+config.xml
+.idea/
+hooks/
+>>>>>>> ec4c2ead72a2f1438ca9fc28865ccce3dba25e41
