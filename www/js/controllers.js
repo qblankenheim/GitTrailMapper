@@ -1,6 +1,10 @@
 var isLoggedIn = false;
 
 module
+
+
+
+
 .controller('homeCtrl', function($scope, $ionicLoading, $timeout, $state, $rootScope) {
 
   $rootScope.hideTabs = false;
@@ -38,10 +42,10 @@ module
   }
   // var options = {timeout: 10000, enableHighAccuracy: true};
   // var latLng = new google.maps.LatLng(43.071278, -89.406797);
-  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+  //var posOptions = {timeout: 10000, enableHighAccuracy: false};
   var lat;
   var long;
-
+/*
   $cordovaGeolocation
     .getCurrentPosition(posOptions)
     .then(function (position) {
@@ -108,24 +112,32 @@ module
     }
   );
 
-  watch.clearWatch();
+  watch.clearWatch();*/
 
-  // var latLng = new google.maps.LatLng(43.071278, -89.406797);
-  // var mapOptions = {
-  //         center: latLng,
-  //         zoom: 16,
-  //         mapTypeId: google.maps.MapTypeId.ROADMAP,
-  //         styles: [{
-  //               featureType: 'poi',
-  //               stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-  //             }, {
-  //                      featureType: 'transit.station',
-  //                      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
-  //                    }]
-  //       };
-  //
-  //       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+var latLng = new google.maps.LatLng(43.071278, -89.406797);
+var mapOptions = {
+        center: latLng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [{
+              featureType: 'poi',
+              stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+            }, {
+                     featureType: 'transit.station',
+                     stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+                   }]
+      };
 
+      $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+  var img = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+  var marker = new google.maps.Marker({
+    map: $scope.communitymap,
+    animation: google.maps.Animation.DROP,
+    position: latLng,
+    icon: img
+
+  });
 
   loadTrails();
 
@@ -289,23 +301,27 @@ module
     var marker = new google.maps.Marker({
       map: $scope.map,
       animation: google.maps.Animation.DROP,
-      position: event.latLng
+      position: event.latLng,
+      _info:"Null"
     });
 
 
     var infoWindow = new google.maps.InfoWindow({
-      content:"Null"
+      content:marker._info
     });
 
 
     google.maps.event.addListener(marker,'click', function($scope) {
 
       $rootScope.isNewMarker = true;
+      $rootScope.openMarker = marker;
       console.log($rootScope.isNewMarker);
       infoWindow.open($scope.map, marker);
       $rootScope.currMarkerInfo = infoWindow;
+      $rootScope.openMarker = marker;
       //info.value = infoWindow.getContent();
       $rootScope.info = infoWindow.getContent();
+      marker.setOptions({_info:$rootScope.info});
     });
 
 
@@ -332,10 +348,12 @@ module
   //take the info and add it to the info window on rootScope
   $scope.onInfoSubmit = function(info){
     $rootScope.currMarkerInfo.setContent(info);
+    $rootScope.openMarker.setOptions({_info:info});
     $scope.descriptions.push(info);
     info.value = "" ;
     $rootScope.isNewMarker = false;
   }
+
 
   function convertUser(name){
     if(name == null)
@@ -349,22 +367,68 @@ module
     return temp;
   }
 
+  function reloadPolyline(position){
+    while($scope.flightPaths.length != 0){
+      var temp =  $scope.flightPaths.pop();
+        temp.setMap(null);
+    }
+
+   // $scope.flightPath.setMap(null);
+    console.log(position + "  " + $scope.flightPlanCoordinates[0]);
+    var index  =  $scope.flightPlanCoordinates.indexOf(position)
+    $scope.flightPlanCoordinates.splice(index,1);
+
+    var flightPath = new google.maps.Polyline({
+      path: $scope.flightPlanCoordinates,
+      geodesic: true,
+      strokeColor: '#1e26ff',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+    flightPath.setMap($scope.map);
+    $scope.flightPaths.push(flightPath);
+
+    //$scope.flightPath.setMap($scope.map);
+  }
+
+  $scope.deleteMarker = function(){
+    var marker_to_delete = $rootScope.openMarker;
+    marker_to_delete.setMap(null);
+    reloadPolyline($rootScope.openMarker.getPosition());
+    $rootScope.isNewMarker = false;
+  };
+
+  // Checks for valid trailname
+
+  function validTrailName(name){
+    console.log("VALIDATING TRAIL NAME")
+    console.log("NAME: ")
+    console.log(name);
+    if(name == null || name == '' || $scope.pathNames.indexOf(name)>=0)
+      return false;
+    else
+      return true;
+  }
+
   function createTrailPath(name, path, info) {
     console.log("CREATING PATH");
     var user = convertUser($rootScope.username);
     for(var ind in path){
-      console.log(ind)
-      console.log($scope.descriptions[ind]);
 
-      if ($scope.descriptions[ind] == null){
-        $scope.descriptions[ind] = "Null";
-      }
+
+//      console.log(ind)
+//      console.log($scope.descriptions[ind]);
+//
+//      if ($scope.descriptions[ind] == null){
+//        $scope.descriptions[ind] = "Null";
+//      }
 
       var out = path[ind];
       firebase.database().ref('trails/'+ user + '/' + name + '/' + ind).set({
         lat: out.lat(),
         lng: out.lng(),
-        info: $scope.descriptions[ind]
+        info: $scope.markers[ind]._info
       });
 
     }
@@ -414,8 +478,11 @@ module
 
     // Removes polylines
     var len = $scope.flightPaths.length;
-    for(i = 0 ; i < len; i++)
-      $scope.flightPaths[i].setMap(null);
+    for(i = 0 ; i < len; i++){
+      $scope.flightPaths.pop().setMap(null);
+      i--;
+    }
+
     $scope.flightPaths = [];
 
     len = $scope.markers.length;
@@ -452,8 +519,8 @@ module
     console.log("Display Path: " + name);
     clearMap($scope.markers);
     clearMap($scope.flightPaths);
-    $scope.flightPaths = [];
-    $scope.markers = [];
+    // $scope.flightPaths = [];
+    // $scope.markers = [];
     var user = convertUser($rootScope.username);
     console.log("Path in Database: " + '/trails/' + user + '/' + name)
     firebase.database().ref('/trails/' + user + '/' + name).once('value')
@@ -486,7 +553,7 @@ module
           information.push(info);
         });
         var out = setOneTrail(positions,information,$scope.map);
-        $scope.flightPaths = out.flightPaths;
+        $scope.flightPaths.push(out.flightPaths);
         $scope.markers = out.markers;
         for(var i = 0; i < out.markers.length; i++){
           $scope.flightPlanCoordinates.push(out.markers[i].position);
@@ -603,7 +670,7 @@ module
     }).catch(function(error) {
       var errorCode = error.code;
       var errorMessage = error.message;
-      $ionicLoading.show({ template: 'Creation of user unsuccessful! Try again!', noBackdrop: true, duration: 1000 });
+      $ionicLoading.show({ template: 'Creation of user unsuccessful! Try again! Passwords need a letter and a number!', noBackdrop: true, duration: 1000 });
     });
   };
 
@@ -714,7 +781,7 @@ function setOneTrail(positions, information, map) {
     i--;
     // }
   }
-  return {"markers":markers, "flightPaths":polylines };
+  return {"markers":markers, "flightPath":polylines };
 }
 
 /**
@@ -757,7 +824,10 @@ function validTrailName(name){
 }
 
 function clearMap(markers){
-  for(var i = 0; i < markers.length; i++)
-    markers[i].setMap(null);
+  for(var i = 0; i < markers.length; i++){
+    var mark = markers.pop();
+    if(mark != null)
+      mark.setMap(null);
+  }
 }
 
