@@ -45,10 +45,10 @@ module
   }
   // var options = {timeout: 10000, enableHighAccuracy: true};
   // var latLng = new google.maps.LatLng(43.071278, -89.406797);
-  var posOptions = {timeout: 10000, enableHighAccuracy: false};
+  //var posOptions = {timeout: 10000, enableHighAccuracy: false};
   var lat;
   var long;
-
+/*
   $cordovaGeolocation
     .getCurrentPosition(posOptions)
 
@@ -118,24 +118,32 @@ module
     }
   );
 
-  watch.clearWatch();
+  watch.clearWatch();*/
 
-// var latLng = new google.maps.LatLng(43.071278, -89.406797);
-// var mapOptions = {
-//         center: latLng,
-//         zoom: 16,
-//         mapTypeId: google.maps.MapTypeId.ROADMAP,
-//         styles: [{
-//               featureType: 'poi',
-//               stylers: [{ visibility: 'off' }]  // Turn off points of interest.
-//             }, {
-//                      featureType: 'transit.station',
-//                      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
-//                    }]
-//       };
-//
-//       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+var latLng = new google.maps.LatLng(43.071278, -89.406797);
+var mapOptions = {
+        center: latLng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: [{
+              featureType: 'poi',
+              stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+            }, {
+                     featureType: 'transit.station',
+                     stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+                   }]
+      };
 
+      $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+  var img = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+  var marker = new google.maps.Marker({
+    map: $scope.communitymap,
+    animation: google.maps.Animation.DROP,
+    position: latLng,
+    icon: img
+
+  });
 
   loadTrails();
 
@@ -221,7 +229,7 @@ module
     console.log(positions.length + "////////////////");
     var i;
 
-      for( i = 0;i<=positions.length;i++) {
+      for( i = 0;i<positions.length;i++) {
 
         var infoInMarker = information.pop();
 
@@ -337,6 +345,7 @@ module
     google.maps.event.addListener(marker,'click', function($scope) {
 
       $rootScope.isNewMarker = true;
+      $rootScope.openMarker = marker;
       console.log($rootScope.isNewMarker);
       infoWindow.open($scope.map, marker);
       $rootScope.currMarkerInfo = infoWindow;
@@ -389,7 +398,16 @@ module
     return temp;
   }
 
+  function reloadPolyline(position){
+    $scope.flightPath.getPath().removeAt(position);
+    $scope.flightPath.setMap($scope.map);
+  }
 
+  $scope.deleteMarker = function(){
+    var marker_to_delete = $rootScope.openMarker;
+    marker_to_delete.setMap(null);
+    reloadPolyline($rootScope.openMarker.getPosition());
+  };
 
   // Checks for valid trailname
 
@@ -655,7 +673,7 @@ $rootScope.hideTabs = true;
     }).catch(function(error) {
       var errorCode = error.code;
       var errorMessage = error.message;
-      $ionicLoading.show({ template: 'Creation of user unsuccessful! Try again!', noBackdrop: true, duration: 1000 });
+      $ionicLoading.show({ template: 'Creation of user unsuccessful! Try again! Passwords need a letter and a number!', noBackdrop: true, duration: 1000 });
     });
   };
 
