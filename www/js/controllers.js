@@ -333,12 +333,13 @@ var mapOptions = {
     var marker = new google.maps.Marker({
       map: $scope.map,
       animation: google.maps.Animation.DROP,
-      position: event.latLng
+      position: event.latLng,
+      _info:"Null"
     });
 
 
     var infoWindow = new google.maps.InfoWindow({
-      content:"Null"
+      content:marker._info
     });
 
 
@@ -349,8 +350,10 @@ var mapOptions = {
       console.log($rootScope.isNewMarker);
       infoWindow.open($scope.map, marker);
       $rootScope.currMarkerInfo = infoWindow;
+      $rootScope.openMarker = marker;
       //info.value = infoWindow.getContent();
       $rootScope.info = infoWindow.getContent();
+      marker.setOptions({_info:$rootScope.info});
     });
 
 
@@ -376,10 +379,16 @@ var mapOptions = {
     $scope.flightPaths.push($scope.flightPath);
   });
 
+  $scope.printMarkersInfo = function(){
+    for (var i = 0; i < $scope.markers.length; i++){
+      console.log($scope.markers[i]._info);
+    }
+  }
 
   //take the info and add it to the info window on rootScope
   $scope.onInfoSubmit = function(info){
     $rootScope.currMarkerInfo.setContent(info);
+    $rootScope.openMarker.setOptions({_info:info});
     $scope.descriptions.push(info);
     info.value = "" ;
     $rootScope.isNewMarker = false;
@@ -448,18 +457,20 @@ var mapOptions = {
     console.log("CREATING PATH");
     var user = convertUser($rootScope.username);
     for(var ind in path){
-      console.log(ind)
-      console.log($scope.descriptions[ind]);
 
-      if ($scope.descriptions[ind] == null){
-        $scope.descriptions[ind] = "Null";
-      }
+
+//      console.log(ind)
+//      console.log($scope.descriptions[ind]);
+//
+//      if ($scope.descriptions[ind] == null){
+//        $scope.descriptions[ind] = "Null";
+//      }
 
       var out = path[ind];
       firebase.database().ref('trails/'+ user + '/' + name + '/' + ind).set({
         lat: out.lat(),
         lng: out.lng(),
-        info: $scope.descriptions[ind]
+        info: $scope.markers[ind]._info
       });
 
     }
