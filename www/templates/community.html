@@ -1,13 +1,30 @@
 
 <ion-view view-title="Community">
-  <ion-content class="background">
-    <div id = "map" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
-
-    <div id = "map-nav-bar" class="bar bar-footer bar-balanced">
-
-      <button id="new-button"  ng-click="reload()">Refresh</button>
-      <!--class="button button-royal icon ion-plus trails"-->
+  <ion-side-menus><ion-side-menu side="left" scroll="true">
+    <h1>MY TRAILS</h1>
+    <!-- <button style="width:90%; margin:5%;" class="button button-royal" ng-repeat="x in $parent.pathNames">{{x}}</button> -->
+    <div style="overflow:scroll; height:80%" >
+      <div class="card"  ng-repeat="trail in $parent.trailsForSearch">
+        <h2>{{trail.key}}</h2>
+        <div class="item item-text-wrap">
+          <button ng-click="goToTrail(trail)">take me to trail</button>
+        </div>
+      </div>
     </div>
-  </ion-content>
+  </ion-side-menu>
+    <ion-side-menu-content>
+      <ion-content class="background">
+
+        <div id = "map" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
+
+        <div id = "map-nav-bar" class="bar bar-footer bar-balanced">
+
+          <button menu-toggle id="search-button" class="button button-royal icon ion-search trails"></button>
+          <button id="new-button"  ng-click="reload()">Refresh</button>
+          <!--class="button button-royal icon ion-plus trails"-->
+        </div>
+      </ion-content>
+    </ion-side-menu-content>
+  </ion-side-menus>
 </ion-view>
 

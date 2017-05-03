@@ -146,131 +146,145 @@ var mapOptions = {
 
   loadTrails();
 
-  function loadTrails(){
+function loadTrails(){
+  $scope.trailsForSearch = [];
+  /// /setting up defer
+  var defer = $q.defer;
+  defer.resolve;
+//calling database to get all trails in db variable
+  var db = firebase.database().ref('/trails/').once('value')
+    .then( function (ref) {
+      //for every user in database
+      ref.forEach( function(user) {
+        //console.log(user.key);
 
-    /// /setting up defer
-    var defer = $q.defer;
-    defer.resolve;
-  //calling database to get all trails in db variable
-    var db = firebase.database().ref('/trails/').once('value')
-      .then( function (ref) {
-        //for every user in database
-        ref.forEach( function(user) {
-          console.log(user.key);
+        //for every trail in a user
+        user.forEach(function(trail){
+          $scope.trailsForSearch.push(trail);
+          //console.log(trail.key);
 
-          //for every trail in a user
-          user.forEach(function(trail){
-            console.log(trail.key);
+          $scope.positions = [];
+          $scope.information = [];
 
-            $scope.positions = [];
-            $scope.information = [];
+          //for every index in a trail
+          trail.forEach(function(index){
+            var lat;
+            var lng;
+            var info;
 
-            //for every index in a trail
-            trail.forEach(function(index){
-              var lat;
-              var lng;
-              var info;
-
-              //for each feature in an index
-              index.forEach(function(value){
-                console.log(value.key);
-                if(value.key == "lat"){
-                  lat = value.val();
-                }
-                else if(value.key == ("lng")){
-                  lng = value.val();
-                }
-                else if(value.key == ("info")){
-                  info = value.val();
-                }
-                else{
-                  console.log("not good 137");
-                }
-              });
-              console.log(lat + " " + lng);
-              $scope.positions.push(new google.maps.LatLng(lat,lng));
-              $scope.information.push(info);
+            //for each feature in an index
+            index.forEach(function(value){
+              //console.log(value.key);
+              if(value.key == "lat"){
+                lat = value.val();
+              }
+              else if(value.key == ("lng")){
+                lng = value.val();
+              }
+              else if(value.key == ("info")){
+                info = value.val();
+              }
+              else{
+                console.log("not good 137");
+              }
             });
-
-            loadOneTrail($scope.positions, $scope.information);
-
-
+            //console.log(lat + " " + lng);
+            $scope.positions.push(new google.maps.LatLng(lat,lng));
+            $scope.information.push(info);
           });
+
+          loadOneTrail($scope.positions, $scope.information);
+
 
         });
-
-
-        var out = ref.val();
-        return defer.resolve;
-      },function (error){
-        console.log(error);
-        return defer.resolve;
-      })
-  }
-
-
-  function loadOneTrail(positions, information) {
-    //make markers
-
-    $scope.polylines = new google.maps.Polyline({
-        path: positions,
-        geodesic: true,
-        strokeColor: '#1e26ff',
-        strokeOpacity: 1.0,
-        strokeWeight: 2
       });
 
-    $scope.polylines.setMap($scope.communitymap);
-
-    console.log(positions.length + "////////////////");
-    var i;
-
-      for( i = 0;i<positions.length;i++) {
-
-        var infoInMarker = information.pop();
-
-        if(infoInMarker != "Null") {
-          console.log("marker made");
-
-          var currpos = positions.pop();
 
 
-          var marker = new google.maps.Marker({
-            map: $scope.communitymap,
-            animation: google.maps.Animation.DROP,
-            position: currpos,
-          });
 
-          setMarkers(infoInMarker, marker);
-          i--;
-        }
+
+      var out = ref.val();
+      return defer.resolve;
+    },function (error){
+      console.log(error);
+      return defer.resolve;
+    })
+}
+
+
+function loadOneTrail(positions, information) {
+  //make markers
+
+  $scope.polylines = new google.maps.Polyline({
+      path: positions,
+      geodesic: true,
+      strokeColor: '#1e26ff',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+  $scope.polylines.setMap($scope.communitymap);
+
+  //console.log(positions.length + "////////////////");
+  var i;
+
+    for( i = 0;i<positions.length;i++) {
+
+      var infoInMarker = information.pop();
+
+      if(infoInMarker != "Null") {
+        //console.log("marker made");
+
+        var currpos = positions.pop();
+
+
+        var marker = new google.maps.Marker({
+          map: $scope.communitymap,
+          animation: google.maps.Animation.DROP,
+          position: currpos,
+        });
+
+        setMarkers(infoInMarker, marker);
+        i--;
       }
+    }
 
 
 
 
 
-  }
+}
 
-  //creates the markers, creates the instances
-  function setMarkers(info, marker){
+//creates the markers, creates the instances
+function setMarkers(info, marker){
 
-    var infoWindow = new google.maps.InfoWindow({
-      content: info,
-      position: marker.getPosition()
-    });
+  var infoWindow = new google.maps.InfoWindow({
+    content: info,
+    position: marker.getPosition()
+  });
 
-    google.maps.event.addListener(marker, 'click', function () {
-      infoWindow.open($scope.communitymap, marker);
-    });
+  google.maps.event.addListener(marker, 'click', function () {
+    infoWindow.open($scope.communitymap, marker);
+  });
 
-  }
+}
 
 
 
-  $scope.reload = function(){
-       loadTrails();
-     }
+$scope.reload = function(){
+     loadTrails();
+   }
+
+$scope.goToTrail = function(trail) {
+   var newLatLng = [trail.val()[0].lat, trail.val()[0].lng];
+   console.log(trail);
+   console.log(newLatLng);
+   $scope.communitymap.setCenter({
+                      		lat : newLatLng[0],
+                      		lng : newLatLng[1]
+                      	});
+}
+
 })
 
 
