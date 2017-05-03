@@ -71,6 +71,14 @@ module
       };
 
       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var img = 'http://www.robotwoods.com/dev/misc/bluecircle.png';
+      var marker = new google.maps.Marker({
+        map: $scope.communitymap,
+        animation: google.maps.Animation.DROP,
+        position: latLng,
+        icon: img
+
+      });
 
     }, function(err) {
       console.log(err)
@@ -111,6 +119,23 @@ module
   );
 
   watch.clearWatch();
+
+// var latLng = new google.maps.LatLng(43.071278, -89.406797);
+// var mapOptions = {
+//         center: latLng,
+//         zoom: 16,
+//         mapTypeId: google.maps.MapTypeId.ROADMAP,
+//         styles: [{
+//               featureType: 'poi',
+//               stylers: [{ visibility: 'off' }]  // Turn off points of interest.
+//             }, {
+//                      featureType: 'transit.station',
+//                      stylers: [{ visibility: 'off' }]  // Turn off bus stations, train stations, etc.
+//                    }]
+//       };
+//
+//       $scope.communitymap = new google.maps.Map(document.getElementById("map"), mapOptions);
+
 
   loadTrails();
 
@@ -195,24 +220,28 @@ module
 
     console.log(positions.length + "////////////////");
     var i;
-    for( i = 0;i<=positions.length*2+1;i++){
 
-      var currpos = positions.pop();
+      for( i = 0;i<=positions.length;i++) {
 
+        var infoInMarker = information.pop();
 
+        if(infoInMarker != "Null") {
+          console.log("marker made");
 
-      var marker = new google.maps.Marker({
-        map: $scope.communitymap,
-        animation: google.maps.Animation.DROP,
-        position: currpos,
-
-      });
-
-          setMarkers(information.pop(), marker);
+          var currpos = positions.pop();
 
 
+          var marker = new google.maps.Marker({
+            map: $scope.communitymap,
+            animation: google.maps.Animation.DROP,
+            position: currpos,
+          });
 
-    }
+          setMarkers(infoInMarker, marker);
+          i--;
+        }
+      }
+
 
 
 
@@ -233,12 +262,12 @@ module
 
   }
 
+
+
+  $scope.reload = function(){
+       loadTrails();
+     }
 })
-
-//  $scope.reload = function(){
-//    loadTrails();
-//  }
-
 
 
 .controller('mapsCtrl', function($scope, $state, $cordovaGeolocation, $rootScope, $q) {
@@ -615,7 +644,7 @@ module
 
 
 
-.controller('logCtrl', function($scope, $ionicLoading, $timeout, $rootScope, $state,) {
+.controller('logCtrl', function($scope, $ionicLoading, $timeout, $rootScope, $state) {
 
  // angular.element(document.querySelector("tabID")).display("hidden");
 $rootScope.hideTabs = true;
