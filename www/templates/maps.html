@@ -50,7 +50,8 @@
 
         <form ng-if = "$parent.$parent.$parent.isNewMarker && $parent.$parent.$parent.info == 'Null'" class = "slide">
           <input id="info" type="text" ng-model="info" placeholder="Marker Description">
-          <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Save Discription</button>
+          <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Save</button>
+          <button class = "button button-royal" ng-click = "deleteMarker()">Delete</button>
         </form>
 
 
