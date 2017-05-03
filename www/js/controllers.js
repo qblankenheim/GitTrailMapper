@@ -399,14 +399,37 @@ var mapOptions = {
   }
 
   function reloadPolyline(position){
-    $scope.flightPath.getPath().removeAt(position);
-    $scope.flightPath.setMap($scope.map);
+
+
+    while($scope.flightPaths.length != 0){
+      var temp =  $scope.flightPaths.pop();
+        temp.setMap(null);
+    }
+
+   // $scope.flightPath.setMap(null);
+    console.log(position + "  " + $scope.flightPlanCoordinates[0]);
+    var index  =  $scope.flightPlanCoordinates.indexOf(position)
+    $scope.flightPlanCoordinates.splice(index,1);
+
+    var flightPath = new google.maps.Polyline({
+      path: $scope.flightPlanCoordinates,
+      geodesic: true,
+      strokeColor: '#1e26ff',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+    flightPath.setMap($scope.map);
+    $scope.flightPaths.push(flightPath);
+
+    //$scope.flightPath.setMap($scope.map);
   }
 
   $scope.deleteMarker = function(){
     var marker_to_delete = $rootScope.openMarker;
     marker_to_delete.setMap(null);
     reloadPolyline($rootScope.openMarker.getPosition());
+    $rootScope.isNewMarker = false;
   };
 
   // Checks for valid trailname
