@@ -18,10 +18,52 @@
     	<ion-content class="background">
         <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
 
+
+<!--         <div class = "menu" id = "menu1">
+          <h3>Create a New Trail or Edit Current One</h3>
+          <button ng-click = "createTrailName(trailName)">Create a New Trail</button>
+          <button>Edit a Current Trail (Doesn't work)</button>
+          <input type="text"  ng-model='$parent.trailName' name="txt2">
+        </div>
+
+        <div class = "menu" id = "menu2">
+          <h3>Create a new Marker or Finish Trail</h3>
+          <button ng-click = "newMarker()">New Marker</button>
+          <button ng-click="finishTrail()">Finish Trail</button>
+          <input type = "text" placeholder="Marker Name" ng-model = "$parent.currentMarkerName"></input>
+        </div>
+
+        <div class = "menu" id = "menu3">
+          <h3>Use Current Position or Click On Map and Add Position Manually</h3>
+          <button ng-click = "useCurrentPosition()">Current Position</button>
+          <button ng-click = "useManualPosition()">Manually Add Position</button>
+          <input type = "text" placeholder="Marker info..." ng-model = "$parent.currentMarkerInfo"></input>
+        </div> -->
+
+
+
         <form ng-if="$parent.textBox" class="slide" ng-show="$parent.textBox">
           <input type="text" ng-model="$parent.$parent.$parent.trailName" >
           <button class="button button-royal" ng-click="$parent.$parent.$parent.finishTrail()">SUBMIT</button>
         </form>
+
+
+        <form ng-if = "$parent.$parent.$parent.isNewMarker && $parent.$parent.$parent.info == 'Null'" class = "slide">
+          <input id="info" type="text" ng-model="info" placeholder="Marker Description">
+          <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Save</button>
+          <button class = "button button-royal" ng-click = "deleteMarker()">Delete</button>
+          <button class = "button button-royal" ng-click = "cancelUpdate()">Cancel</button>
+        </form>
+
+
+
+
+
+        <!--<span style="position:absolute; top:20%;">Scope Value: {{$scope.trailName}}</span>-->
+        <!--<span style="position:absolute; top:30%;">Parent Value: {{$parent.$parent.$parent.isNewMarker}}</span>-->
+<!--         <span style="position:absolute; top:20%;">Scope Value: {{$scope.textBox}}</span>
+        <span style="position:absolute; top:30%;">Parent Value: {{$parent.textBox}}</span>
+ -->
 
     		<div id = "map-nav-bar" class="bar bar-footer bar-balanced">
           <button menu-toggle id="search-button" class="button button-royal icon ion-search trails"></button>
