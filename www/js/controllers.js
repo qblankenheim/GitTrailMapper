@@ -379,11 +379,6 @@ var mapOptions = {
     $scope.flightPaths.push($scope.flightPath);
   });
 
-  $scope.printMarkersInfo = function(){
-    for (var i = 0; i < $scope.markers.length; i++){
-      console.log($scope.markers[i]._info);
-    }
-  }
 
   //take the info and add it to the info window on rootScope
   $scope.onInfoSubmit = function(info){
@@ -392,8 +387,13 @@ var mapOptions = {
     $scope.descriptions.push(info);
     info.value = "" ;
     $rootScope.isNewMarker = false;
-
   }
+
+
+  $scope.cancelUpdate = function(){
+    $rootScope.isNewMarker = false;
+  }
+  
 
   function convertUser(name){
     if(name == null)
