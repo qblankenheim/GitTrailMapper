@@ -221,7 +221,7 @@ module
     console.log(positions.length + "////////////////");
     var i;
 
-      for( i = 0;i<=positions.length;i++) {
+      for( i = 0;i<positions.length;i++) {
 
         var infoInMarker = information.pop();
 
