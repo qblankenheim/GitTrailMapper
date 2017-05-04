@@ -447,6 +447,7 @@ $scope.goToTrail = function(trail) {
   $scope.deleteMarker = function(){
     var marker_to_delete = $rootScope.openMarker;
     marker_to_delete.setMap(null);
+    $scope.markers.splice($scope.markers.indexOf(marker_to_delete),1);
     reloadPolyline($rootScope.openMarker.getPosition());
     $rootScope.isNewMarker = false;
   };
