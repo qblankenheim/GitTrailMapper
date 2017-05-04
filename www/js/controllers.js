@@ -137,64 +137,6 @@ function loadTrails(){
     })
 }
 
-//  function loadTrails(){
-//    /// /setting up defer
-//    var defer = $q.defer;
-//    defer.resolve;
-//    //calling database to get all trails in db variable
-//    var db = firebase.database().ref('/trails/').once('value')
-//      .then( function (ref) {
-//        //for every user in database
-//        ref.forEach( function(user) {
-//          console.log(user.key);
-//
-//          //for every trail in a user
-//          user.forEach(function(trail){
-//            console.log(trail.key);
-//
-//            $scope.positions = [];
-//            $scope.information = [];
-//
-//            //for every index in a trail
-//            trail.forEach(function(index){
-//              var lat;
-//              var lng;
-//              var info;
-//
-//              //for each feature in an index
-//              index.forEach(function(value){
-//                console.log(value.key);
-//                if(value.key == "lat"){
-//                  lat = value.val();
-//                }
-//                else if(value.key == ("lng")){
-//                  lng = value.val();
-//                }
-//                else if(value.key == ("info")){
-//                  info = value.val();
-//                }
-//                else{
-//                  console.log("not good 137");
-//                }
-//              });
-//              console.log(lat + " " + lng);
-//              $scope.positions.push(new google.maps.LatLng(lat,lng));
-//              $scope.information.push(info);
-//            });
-//            loadOneTrail($scope.positions, $scope.information);
-//          });
-//        });
-//
-//        var out = ref.val();
-//        return defer.resolve;
-//      },function (error){
-//        console.log(error);
-//        return defer.resolve;
-//      })
-//  }
-
-
-
 function loadOneTrail(positions, information) {
   //make markers
 
@@ -346,7 +288,7 @@ $scope.goToTrail = function(trail) {
     google.maps.event.addListener(marker,'click', function($scope) {
       $rootScope.isNewMarker = true;
       $rootScope.openMarker = marker;
-      console.log($rootScope.isNewMarker);
+
       infoWindow.open($scope.map, marker);
       $rootScope.currMarkerInfo = infoWindow;
       $rootScope.openMarker = marker;
@@ -377,7 +319,6 @@ $scope.goToTrail = function(trail) {
   $scope.onInfoSubmit = function(info){
     $rootScope.currMarkerInfo.setContent(info);
     $rootScope.openMarker.setOptions({_info:info});
-    $scope.descriptions.push(info);
     info.value = "" ;
     $rootScope.isNewMarker = false;
   }
@@ -612,7 +553,58 @@ $scope.goToTrail = function(trail) {
         return defer.resolve;
       });
   }
+function setOneTrail(positions, information, map) {
 
+  markers = [];
+
+  //make markers
+  polylines = new google.maps.Polyline({
+      path: positions,
+      geodesic: true,
+      strokeColor: '#1e26ff',
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+  polylines.setMap(map);
+  for(var i = 0;i<positions.length;i++) {
+    var infoInMarker = information.pop();
+    // if(infoInMarker != "Null") {
+    var currpos = positions.pop();
+    var marker = new google.maps.Marker({
+      map: map,
+      animation: google.maps.Animation.DROP,
+      position: currpos,
+    });
+    markers.push(marker);
+    if(infoInMarker != null)
+      setInfo(infoInMarker, marker, map);
+    i--;
+  }
+  return {"markers":markers, "flightPath":polylines };
+}
+
+/**
+*   Sets a marker to the map
+*/
+function setInfo(info, marker, map){
+  var infoWindow = new google.maps.InfoWindow({
+    content: info,
+    position: marker.getPosition()
+  });
+
+  google.maps.event.addListener(marker, 'click', function () {
+    infoWindow.open(map, marker);
+
+    $rootScope.isNewMarker = true;
+    $rootScope.openMarker = marker;
+    $rootScope.currMarkerInfo = infoWindow;
+    //info.value = infoWindow.getContent();
+    $rootScope.info = infoWindow.getContent();
+    marker.setOptions({_info:$rootScope.info});
+
+  });
+}
 
 })
 
@@ -721,49 +713,60 @@ $rootScope.hideTabs = true;
 /**
 *   Loads trails based on the poititon onto the current map
 */
-function setOneTrail(positions, information, map) {
 
-  markers = [];
 
-  //make markers
-  polylines = new google.maps.Polyline({
-      path: positions,
-      geodesic: true,
-      strokeColor: '#1e26ff',
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-    });
-
-  polylines.setMap(map);
-  for(var i = 0;i<positions.length;i++) {
-    var infoInMarker = information.pop();
-    // if(infoInMarker != "Null") {
-    var currpos = positions.pop();
-    var marker = new google.maps.Marker({
-      map: map,
-      animation: google.maps.Animation.DROP,
-      position: currpos,
-    });
-    markers.push(marker);
-    if(infoInMarker != null)
-      setInfo(infoInMarker, marker);
-    i--;
-  }
-  return {"markers":markers, "flightPath":polylines };
-}
-
-/**
-*   Sets a marker to the map
-*/
-function setInfo(info, marker, map){
-  var infoWindow = new google.maps.InfoWindow({
-    content: info,
-    position: marker.getPosition()
-  });
-  google.maps.event.addListener(marker, 'click', function () {
-    infoWindow.open(map, marker);
-  });
-}
+//function setOneTrail(positions, information, map) {
+//
+//  markers = [];
+//
+//  //make markers
+//  polylines = new google.maps.Polyline({
+//      path: positions,
+//      geodesic: true,
+//      strokeColor: '#1e26ff',
+//      strokeOpacity: 1.0,
+//      strokeWeight: 2
+//    });
+//
+//  polylines.setMap(map);
+//  for(var i = 0;i<positions.length;i++) {
+//    var infoInMarker = information.pop();
+//    // if(infoInMarker != "Null") {
+//    var currpos = positions.pop();
+//    var marker = new google.maps.Marker({
+//      map: map,
+//      animation: google.maps.Animation.DROP,
+//      position: currpos,
+//    });
+//    markers.push(marker);
+//    if(infoInMarker != null)
+//      setInfo(infoInMarker, marker, map);
+//    i--;
+//  }
+//  return {"markers":markers, "flightPath":polylines };
+//}
+//
+///**
+//*   Sets a marker to the map
+//*/
+//function setInfo(info, marker, map,$rootScope){
+//  var infoWindow = new google.maps.InfoWindow({
+//    content: info,
+//    position: marker.getPosition()
+//  });
+//
+//  google.maps.event.addListener(marker, 'click', function () {
+//    infoWindow.open(map, marker);
+//
+//    $rootScope.isNewMarker = true;
+//    $rootScope.openMarker = marker;
+//
+//    //info.value = infoWindow.getContent();
+//    $rootScope.info = infoWindow.getContent();
+//    marker.setOptions({_info:$rootScope.info});
+//
+//  });
+//}
 
 // Converts the users email to a firebase compatible database entry name
 function convertUser(name){
