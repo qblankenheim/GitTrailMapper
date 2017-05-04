@@ -1,10 +1,6 @@
 var isLoggedIn = false;
 
 module
-
-
-
-
 .controller('homeCtrl', function($scope, $ionicLoading, $timeout, $state, $rootScope) {
 
   $rootScope.hideTabs = false;
@@ -45,7 +41,7 @@ module
   //var posOptions = {timeout: 10000, enableHighAccuracy: false};
   var lat;
   var long;
-/*
+  /*
   $cordovaGeolocation
     .getCurrentPosition(posOptions)
     .then(function (position) {
@@ -114,8 +110,8 @@ module
 
   watch.clearWatch();*/
 
-var latLng = new google.maps.LatLng(43.071278, -89.406797);
-var mapOptions = {
+  var latLng = new google.maps.LatLng(43.071278, -89.406797);
+  var mapOptions = {
         center: latLng,
         zoom: 16,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -265,7 +261,7 @@ var mapOptions = {
   var latLng = new google.maps.LatLng(43.071278, -89.406797);
   var mapOptions = {
     center: latLng,
-    zoom: 17,
+    zoom: 14,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
     styles: [{
           featureType: 'poi',
@@ -294,25 +290,18 @@ var mapOptions = {
   });
 
   // Event listener that detects clicks on map and adds marker
-
-
   google.maps.event.addListener($scope.map, 'click', function (event) {
-
     var marker = new google.maps.Marker({
       map: $scope.map,
       animation: google.maps.Animation.DROP,
       position: event.latLng,
       _info:"Null"
     });
-
-
     var infoWindow = new google.maps.InfoWindow({
       content:marker._info
     });
 
-
     google.maps.event.addListener(marker,'click', function($scope) {
-
       $rootScope.isNewMarker = true;
       $rootScope.openMarker = marker;
       console.log($rootScope.isNewMarker);
@@ -324,15 +313,12 @@ var mapOptions = {
       marker.setOptions({_info:$rootScope.info});
     });
 
-
     $scope.markers.push(marker);
     $scope.flightPlanCoordinates.push(event.latLng);
 
-    console.log(infoWindow.content);
+    // console.log(infoWindow.content);
     //console.log($scope.descriptions[$scope.descriptions.length -1]);
     //console.log($scope.flightPlanCoordinates);
-
-
 
     $scope.flightPath = new google.maps.Polyline({
       path: $scope.flightPlanCoordinates,
@@ -416,7 +402,6 @@ var mapOptions = {
     var user = convertUser($rootScope.username);
     for(var ind in path){
 
-
 //      console.log(ind)
 //      console.log($scope.descriptions[ind]);
 //
@@ -476,19 +461,8 @@ var mapOptions = {
     $scope.trailName = "";
     $scope.descriptions = [];
 
-    // Removes polylines
-    var len = $scope.flightPaths.length;
-    for(i = 0 ; i < len; i++){
-      $scope.flightPaths.pop().setMap(null);
-      i--;
-    }
-
-    $scope.flightPaths = [];
-
-    len = $scope.markers.length;
-    for(i = 0; i < len; i++)
-      $scope.markers[i].setMap(null);
-    $scope.markers = [];
+    clearMap($scope.flightPaths);
+    clearMap($scope.markers);
     ////////////////////////////////////////////
   };
 
@@ -516,13 +490,12 @@ var mapOptions = {
 
 
   $scope.displayPath = function(name){
-    console.log("Display Path: " + name);
+    console.log($scope.markers);
     clearMap($scope.markers);
     clearMap($scope.flightPaths);
     // $scope.flightPaths = [];
     // $scope.markers = [];
     var user = convertUser($rootScope.username);
-    console.log("Path in Database: " + '/trails/' + user + '/' + name)
     firebase.database().ref('/trails/' + user + '/' + name).once('value')
       .then( function (trail) {
         var positions = [];
@@ -547,17 +520,17 @@ var mapOptions = {
               console.log("not good 137");
             }
           });
-          console.log(lat + " " + lng);
           positions.push(new google.maps.LatLng(lat,lng));
           $scope.descriptions.push(information[0]);
           information.push(info);
         });
         var out = setOneTrail(positions,information,$scope.map);
-        $scope.flightPaths.push(out.flightPaths);
+        $scope.flightPaths.push(out.flightPath);
         $scope.markers = out.markers;
         for(var i = 0; i < out.markers.length; i++){
           $scope.flightPlanCoordinates.push(out.markers[i].position);
         }
+        $scope.map.setCenter($scope.markers[0].getPosition());
       },function (error){
         console.log(error);
         return defer.resolve;
@@ -759,11 +732,6 @@ function setOneTrail(positions, information, map) {
       strokeWeight: 2
     });
 
-  console.log("Length of positions");
-  console.log(positions.length);
-  console.log("Length of information");
-  console.log(information.length);
-
   polylines.setMap(map);
   for(var i = 0;i<positions.length;i++) {
     var infoInMarker = information.pop();
@@ -775,11 +743,9 @@ function setOneTrail(positions, information, map) {
       position: currpos,
     });
     markers.push(marker);
-    console.log('Marker Made');
     if(infoInMarker != null)
       setInfo(infoInMarker, marker);
     i--;
-    // }
   }
   return {"markers":markers, "flightPath":polylines };
 }
@@ -788,12 +754,10 @@ function setOneTrail(positions, information, map) {
 *   Sets a marker to the map
 */
 function setInfo(info, marker, map){
-  console.log("Set Info");
   var infoWindow = new google.maps.InfoWindow({
     content: info,
     position: marker.getPosition()
   });
-
   google.maps.event.addListener(marker, 'click', function () {
     infoWindow.open(map, marker);
   });
@@ -826,8 +790,7 @@ function validTrailName(name){
 function clearMap(markers){
   for(var i = 0; i < markers.length; i++){
     var mark = markers.pop();
-    if(mark != null)
-      mark.setMap(null);
+    mark.setMap(null);
+    i--;
   }
 }
-
