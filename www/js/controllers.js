@@ -340,6 +340,9 @@ module
     $rootScope.isNewMarker = false;
   }
 
+  $scope.cancelUpdate = function(){
+    $rootScope.isNewMarker = false;
+  }
 
   function convertUser(name){
     if(name == null)
@@ -491,7 +494,7 @@ module
     $scope.descriptions = [];
 
     clearMap($scope.markers);
-    clearMap($scope.flightPaths);    
+    clearMap($scope.flightPaths);
   }
 
   $scope.displayPath = function(name){
@@ -780,7 +783,7 @@ function convertUser(name){
   return temp;
 }
 
-// Checks for valid trailname 
+// Checks for valid trailname
 function validTrailName(name){
   console.log("VALIDATING TRAIL NAME")
   console.log("NAME: ")
