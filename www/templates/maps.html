@@ -5,8 +5,11 @@
     <ion-side-menu side="left" scroll="true">
       <h1>MY TRAILS</h1>
       <!-- <button style="width:90%; margin:5%;" class="button button-royal" ng-repeat="x in $parent.pathNames">{{x}}</button> -->
+
       <div style="overflow:scroll; height:80%" >
-      <div class="card" ng-repeat="name in $parent.pathNames">
+
+      <div class="card" ng-repeat="name in $parent.pathNames" ng-click="$parent.displayPath(name)">
+
         <h2>{{name}}</h2>
         <div class="item item-text-wrap">
           This is a basic Card which contains an item that has wrapping text.
@@ -19,58 +22,20 @@
       <!-- Main content, usually <ion-nav-view> -->
     	<ion-content class="background">
         <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
-
-
-<!--         <div class = "menu" id = "menu1">
-          <h3>Create a New Trail or Edit Current One</h3>
-          <button ng-click = "createTrailName(trailName)">Create a New Trail</button>
-          <button>Edit a Current Trail (Doesn't work)</button>
-          <input type="text"  ng-model='$parent.trailName' name="txt2">
-        </div>
-
-        <div class = "menu" id = "menu2">
-          <h3>Create a new Marker or Finish Trail</h3>
-          <button ng-click = "newMarker()">New Marker</button>
-          <button ng-click="finishTrail()">Finish Trail</button>
-          <input type = "text" placeholder="Marker Name" ng-model = "$parent.currentMarkerName"></input>
-        </div>
-
-        <div class = "menu" id = "menu3">
-          <h3>Use Current Position or Click On Map and Add Position Manually</h3>
-          <button ng-click = "useCurrentPosition()">Current Position</button>
-          <button ng-click = "useManualPosition()">Manually Add Position</button>
-          <input type = "text" placeholder="Marker info..." ng-model = "$parent.currentMarkerInfo"></input>
-        </div> -->
-
-
-
         <form ng-if="$parent.textBox" class="slide" ng-show="$parent.textBox">
           <input type="text" ng-model="$parent.$parent.$parent.trailName" >
           <button class="button button-royal" ng-click="$parent.$parent.$parent.finishTrail()">SUBMIT</button>
         </form>
-
-
-        <form ng-if = "$parent.$parent.$parent.isNewMarker && $parent.$parent.$parent.info == 'Null'" class = "slide">
+        <form ng-if = "$parent.$parent.$parent.isNewMarker " class = "slide">
           <input id="info" type="text" ng-model="info" placeholder="Marker Description">
           <button class = "button button-royal" ng-click = "onInfoSubmit(info)">Save</button>
           <button class = "button button-royal" ng-click = "deleteMarker()">Delete</button>
           <button class = "button button-royal" ng-click = "cancelUpdate()">Cancel</button>
         </form>
-
-
-
-
-
-        <!--<span style="position:absolute; top:20%;">Scope Value: {{$scope.trailName}}</span>-->
-        <!--<span style="position:absolute; top:30%;">Parent Value: {{$parent.$parent.$parent.isNewMarker}}</span>-->
-<!--         <span style="position:absolute; top:20%;">Scope Value: {{$scope.textBox}}</span>
-        <span style="position:absolute; top:30%;">Parent Value: {{$parent.textBox}}</span>
- -->
-
     		<div id = "map-nav-bar" class="bar bar-footer bar-balanced">
           <button menu-toggle id="search-button" class="button button-royal icon ion-search trails"></button>
           <button id="new-button" class="button button-royal icon ion-plus trails" ng-click="finishTrail()"></button>
-          <button id="new-button" class="button button-royal icon ion-location trails"></button>
+          <button id="new-button" class="button button-royal icon ion-close trails" ng-click="clearAll()"></button>
     		</div>
 
     	</ion-content>
