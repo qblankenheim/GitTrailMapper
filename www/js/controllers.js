@@ -457,15 +457,10 @@ module
 
     ///// RESET ALL TRAIL RELATED VARS ////////
 
-    $scope.flightPlanCoordinates=[];
-    $scope.trailName = "";
-    $scope.descriptions = [];
+    clearAll();
 
-    clearMap($scope.flightPaths);
-    clearMap($scope.markers);
     ////////////////////////////////////////////
   };
-
 
   function getTrailNames(){
     console.log('Getting Trail Names');
@@ -488,11 +483,20 @@ module
     });
   };
 
+  $scope.clearAll = clearAll;
+
+  function clearAll(){
+    $scope.flightPlanCoordinates=[];
+    $scope.trailName = "";
+    $scope.descriptions = [];
+
+    clearMap($scope.markers);
+    clearMap($scope.flightPaths);    
+  }
 
   $scope.displayPath = function(name){
     console.log($scope.markers);
-    clearMap($scope.markers);
-    clearMap($scope.flightPaths);
+    clearAll();
     // $scope.flightPaths = [];
     // $scope.markers = [];
     var user = convertUser($rootScope.username);

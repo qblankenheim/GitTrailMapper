@@ -88,7 +88,7 @@ button.trails{
     width:100%;
     height:50px;
 }
-.slide.ng-animate { -webkit-animation: none 0s; }
+.slide.ng-animate { -webkit-animation: none 0.25s; }
 
 .slide button{
 	float:left;
