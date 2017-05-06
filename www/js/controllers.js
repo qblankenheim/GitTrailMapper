@@ -33,7 +33,7 @@ module
 
 .controller('commCtrl', function($scope,$cordovaGeolocation, $q, $state) {
 
-
+  $scope.markers=[];
   function getTrail(trailID) {
     return firebase.database().ref('/trails/' + trailID).once('value').then(function(snapshot) {
       var trailName = snapshot.val().trailName;
@@ -76,6 +76,7 @@ module
 
 
 function loadTrails(){
+  clearMap($scope.markers);
   $scope.trailsForSearch = [];
   /// /setting up defer
   var defer = $q.defer;
@@ -122,6 +123,7 @@ function loadTrails(){
             $scope.information.push(info);
           });
 
+
           loadOneTrail($scope.positions, $scope.information);
 
 
@@ -140,6 +142,7 @@ function loadTrails(){
 function loadOneTrail(positions, information) {
   //make markers
 
+
   $scope.polylines = new google.maps.Polyline({
       path: positions,
       geodesic: true,
@@ -157,7 +160,7 @@ function loadOneTrail(positions, information) {
 
       var infoInMarker = information.pop();
 
-      if(infoInMarker != "Null") {
+      if(infoInMarker != null) {
         console.log("marker made");
         var currpos = positions.pop();
 
@@ -167,8 +170,13 @@ function loadOneTrail(positions, information) {
           position: currpos,
         });
 
-
-        setMarkers(infoInMarker, marker);
+        $scope.markers.push(marker);
+        if (infoInMarker != "Null") {
+          setMarkers(infoInMarker, marker);
+        }
+        else {
+          marker.setMap(null);
+        }
         i--;
       }
     }
@@ -430,7 +438,7 @@ $scope.goToTrail = function(trail) {
       if(!$scope.textBox){
         $scope.textBox = true;
       }else{
-        $scope.trailName='Invalid Trail Name';
+        $scope.trailName='';
       }
       console.log('INVALID TRAIL NAME: ');
       console.log($scope.trailName);
@@ -618,8 +626,8 @@ function setInfo(info, marker, map){
 $rootScope.hideTabs = true;
 
 
-  $scope.username = "john.doe@gmail.com";
-  $scope.password = "abc123";
+  $scope.username = "";
+  $scope.password = "";
   $scope.logoutButton = {};
   $scope.logoutButton.visibility = 'hidden';
   $scope.logoutButton.visibility = 'hidden';
@@ -638,6 +646,7 @@ $rootScope.hideTabs = true;
   };
 
   $scope.loginFirebaseUser = function(email, password) {
+    $rootScope.username = email;
     return firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
       var errorCode = error.code;
       var errorMessage = error.message;

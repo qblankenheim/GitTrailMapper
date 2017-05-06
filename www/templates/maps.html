@@ -24,7 +24,7 @@
         <div id = "map1" data-tap-disabled = "true" ng-click = "addOnClick($event)"></div>
 
         <form ng-if="$parent.textBox" class="slide" ng-show="$parent.textBox">
-          <input type="text" ng-model="$parent.$parent.$parent.trailName" >
+          <input type="text" ng-model="$parent.$parent.$parent.trailName"  placeholder="Trail Name">
           <button class="button button-royal" ng-click="$parent.$parent.$parent.finishTrail()">SUBMIT</button>
         </form>
         <form ng-if = "$parent.$parent.$parent.isNewMarker " class = "slide">
